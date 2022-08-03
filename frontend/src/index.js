@@ -1,0 +1,26 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import Home from "./pages/Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Error from "./components/Error";
+import Publication from "./pages/Publication";
+import GlobalStyle from "./utils/style/GlobalStyle";
+import Header from "./components/Header";
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <Router>
+    <GlobalStyle />
+    <Header />
+    <Routes>
+      <Route exact path="/" element={<Home />} />
+      <Route path="/publication/:id" element={<Publication />} />
+
+      <Route path="*" element={<Error />} />
+    </Routes>
+  </Router>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
