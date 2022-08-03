@@ -88,8 +88,7 @@ function Publication({
 }) {
   //Like(id, userId);
   const dateCreation = new Date(createdAt).toLocaleDateString("fr");
-  console.log(userId);
-  console.log(userIdApi);
+
   return (
     <PublicationWrapper>
       <Link to={`/publication/${id}`} className="itemCard">
@@ -97,16 +96,16 @@ function Publication({
         {imageUrl ? (
           <PublicationImage src={imageUrl} alt="Publication" />
         ) : null}
-
-        <FooterPost>
-          <FontAwesomeIcon classname={"faThumbsUp"} icon={faThumbsUp} />
-          <LikeCounter>{likes}</LikeCounter>
-          <FontAwesomeIcon classname={"faThumbsDown"} icon={faThumbsDown} />
-          <LikeCounter>{dislikes}</LikeCounter>
-
-          <PublicationCreation>Créé le {dateCreation}</PublicationCreation>
-        </FooterPost>
       </Link>
+      <FooterPost>
+        <FontAwesomeIcon classname={"faThumbsUp"} icon={faThumbsUp} />
+        <LikeCounter>{likes}</LikeCounter>
+        <FontAwesomeIcon classname={"faThumbsDown"} icon={faThumbsDown} />
+        <LikeCounter>{dislikes}</LikeCounter>
+
+        <PublicationCreation>Créé le {dateCreation}</PublicationCreation>
+      </FooterPost>
+
       {userId === userIdApi ? <BtnModifier>Modifier</BtnModifier> : null}
       {userId === userIdApi ? (
         <BtnSupprimer onClick={() => SupprPost(id)}>Supprimer</BtnSupprimer>

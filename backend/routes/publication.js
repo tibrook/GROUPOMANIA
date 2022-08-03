@@ -3,7 +3,7 @@ const router = express.Router();
 
 const auth = require("../middlewares/auth");
 const multer = require("../middlewares/multer");
-const publiCtrl = require("../controllers/publi");
+const publiCtrl = require("../controllers/publication");
 
 router.get("/", auth, publiCtrl.getAllpublis);
 router.post("/", auth, multer, publiCtrl.createpubli);
