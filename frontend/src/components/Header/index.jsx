@@ -1,12 +1,15 @@
-import { Link } from "react-router-dom";
-
-function Header() {
+import React from "react";
+import { NavLink } from "react-router-dom";
+const Navigation = () => {
   return (
-    <nav>
-      <Link to="/">Accueil</Link>
-      <Link to="/createPost">Créer un Post</Link>
-    </nav>
+    <div className="navigation">
+      <ul>
+        <NavLink to="/">
+          <li>Accueil</li>
+        </NavLink>
+      </ul>
+    </div>
   );
-}
+};
 
-export default Header;
+export default Navigation;

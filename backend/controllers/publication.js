@@ -261,6 +261,7 @@ exports.addLike = (req, res, next) => {
           publi.usersDisliked.push(req.auth.userId);
         }
       } else {
+        console.log(req);
         res.status(400).json({
           error: "Mauvais format",
         });

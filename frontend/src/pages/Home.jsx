@@ -1,34 +1,49 @@
-import Message from "../components/Comment";
 import { useEffect, useState } from "react";
 import { findAll } from "../requests/publicationRequest";
-import MessageCard from "../components/MessageCard";
-const Home = () => {
-  const [messages, setMessages] = useState(null);
+import Publication from "../components/Publication";
+import Logo from "../components/Logo";
+import Header from "../components/Header";
 
+function Home() {
+  const [publications, setPublications] = useState(null);
+  const [error, setErrors] = useState(null);
   useEffect(() => {
-    const fetchPublis = async () => {
-      const reponse = await findAll();
-      return reponse.data;
-
-      /*  if ((reponse.status = 200)) {
-        console.log(reponse.data, messages);
-      } */
+    const getPublications = async () => {
+      const response = await findAll();
+      if (response.status === 200) {
+        console.log("******* getMessages ");
+        setPublications(response.data);
+      } else {
+        console.log(response);
+        setErrors(response.data);
+      }
     };
-    const data = fetchPublis();
-    console.log(data);
-    //setMessages(data);
+
+    getPublications();
   }, []);
 
   return (
-    <div>
-      <h1>Voici les derniers posts en cours 👩‍💻👨‍💻👩‍💻</h1>
-      {messages &&
-        messages.map((message) => (
-          <MessageCard key={message._id} message={message} />
-        ))}
-      {/*   <Message /> */}
+    <div className="mainWrapper">
+      <header>
+        <Logo />
+
+        <Header />
+      </header>
+      <section>
+        {/* faire un composent <MessageForm /> pour ajouter un message */}
+        <h1>Voici les derniers posts en cours 👩‍💻👨‍💻👩‍💻</h1>
+
+        {publications ? (
+          publications.map((publication) => (
+            // <span key={publication._id}>{publication.content}</span>
+            <Publication key={publication._id} publication={publication} />
+          ))
+        ) : (
+          <span className="errorSpan">${error}</span>
+        )}
+      </section>
     </div>
   );
-};
+}
 
 export default Home;
