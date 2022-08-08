@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./routes/user");
 const publiRoutes = require("./routes/publication");
 const helmet = require("helmet");
-
 require("dotenv").config();
 
 const path = require("path");
@@ -21,6 +20,7 @@ const app = express();
 
 app.use(express.json());
 //
+
 /* avoid Cross Origin Ressource Sharing errors & let  frontend and backend communicate*/
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,6 +32,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
   );
+
   next();
 });
 app.use(bodyParser.json());
@@ -39,8 +40,10 @@ app.use(bodyParser.json());
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", userRoutes);
 app.use("/api/publication", publiRoutes);
-app.use(helmet());
+//app.use(helmet());
 app.use((req, res, next) => {
+  console.log(req.headers);
+
   res.status(404).json({ error: "Endpoint not found" });
 });
 module.exports = app;

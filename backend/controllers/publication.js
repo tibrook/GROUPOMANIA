@@ -141,11 +141,10 @@ exports.modifypubli = async (req, res, next) => {
         if (publi.userId != req.auth.userId && resp == 0) {
           res.status(403).json({ error: "unauthorized request" });
         } else {
-          publi
-            .updateOne(
-              { _id: req.params.id },
-              { ...publiObject, _id: req.params.id }
-            )
+          Publi.updateOne(
+            { _id: req.params.id },
+            { ...publiObject, _id: req.params.id }
+          )
             .then(() => {
               /* Si une image est jointe, on supprime l'ancienne image */
               //    fs.unlink(publi.imageUrl, (error) => { console.log(error); })
@@ -167,20 +166,25 @@ exports.modifypubli = async (req, res, next) => {
 /* Delete publi */
 exports.deletepubli = async (req, res, next) => {
   let resp = await checkAdmin(req);
+  console.log(req.params.id);
   Publi.findOne({ _id: req.params.id })
     .then((publi) => {
+      console.log(publi);
       if (publi.userId != req.auth.userId && resp == 0) {
         res.status(401).json({ error: "Not authorized" });
       } else {
-        const filename = publi.imageUrl.split("/images/")[1];
-        fs.unlink(`images/${filename}`, () => {
-          publi
-            .deleteOne({ _id: req.params.id })
-            .then(() => {
-              res.status(204).json();
-            })
-            .catch((error) => res.status(401).json({ error }));
-        });
+        if (publi.imageUrl) {
+          const filename = publi.imageUrl.split("/images/")[1];
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) console.log(err);
+          });
+        }
+        publi
+          .deleteOne({ _id: req.params.id })
+          .then(() => {
+            res.status(204).json();
+          })
+          .catch((error) => res.status(401).json({ error }));
       }
     })
     .catch((error) => {
@@ -329,7 +333,7 @@ const extChecker = (image) => {
   const ext = image.file.originalname.substring(
     image.file.originalname.lastIndexOf(".") + 1
   );
-  if (ext != "jpg" && ext != "jpeg" && ext != "png") {
+  if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "PNG") {
     return null;
   } else {
     return 1;
