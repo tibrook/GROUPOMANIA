@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
@@ -14,24 +14,25 @@ const Like = ({ publication }) => {
     const checkLike = async (id, userId) => {
       const result = await findOne(id);
       if (result.data.usersLiked.includes(userId)) {
-        console.log("t'as déjà liké");
+        // console.log("t'as déjà liké");
+        console.log("userId" + userId + "usersLiked" + result.data.usersLiked);
         setLikeActive(true);
       } else if (result.data.usersDisliked.includes(userId)) {
-        console.log(result.data.usersDisliked);
-        console.log("ta déjà disliké");
+        // console.log(result.data.usersDisliked);
+        // console.log("ta déjà disliké");
         setDislikeActive(true);
       } else {
       }
     };
     checkLike(publication._id, userIdApi);
 
-    console.log(disLikeActiv);
+    // console.log(disLikeActiv);
   });
   const likef = async () => {
     // unlike
     if (likeActiv) {
       const response = await sendLike(0, publication._id);
-      console.log(response);
+      //   console.log(response);
       if (response.status === 201) {
         setLikeActive(false);
         setLike(like - 1);

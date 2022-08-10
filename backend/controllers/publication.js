@@ -4,29 +4,25 @@ const User = require("../models/User");
 const Publication = require("../models/Publication");
 /* Create publi  */
 exports.createpubli = async (req, res, next) => {
+  const authorPubli = await getName(req.auth.userId);
+  console.log(authorPubli);
   let nameFile;
   let publication;
   if (!req.body.publi && !req.file) {
     res.status(400).json({ error: "Il faut au moins une image ou un message" });
     return;
   }
-  if (req.body.publi) {
+  const publiObject = JSON.parse(req.body.publi);
+  if (publiObject.content.trim("").length > 0) {
     // Verification des données envoyées
-    const publiObject = JSON.parse(req.body.publi);
-    if (fieldChecker(req)) {
-      // le type doit être en form-data et non en JSON
 
-      delete publiObject._id;
-      //On remplacera le userID en bdd avec le middleware d'authentification
-      delete publiObject.userId;
-      publication = publiObject.content;
-    } else {
-      supprImage(req);
-      res
-        .status(422)
-        .json({ error: "Les caractères spéciaux ne sont pas acceptés." });
-      return;
-    }
+    //console.log(publiObject.content.trim("").length);
+
+    // le type doit être en form-data et non en JSON
+    delete publiObject._id;
+    //On remplacera le userID en bdd avec le middleware d'authentification
+    delete publiObject.userId;
+    publication = publiObject.content;
   } else {
     publication = null;
   }
@@ -50,6 +46,7 @@ exports.createpubli = async (req, res, next) => {
     content: publication,
     userId: req.auth.userId,
     imageUrl: nameFile,
+    author: authorPubli,
     likes: 0,
     dislikes: 0,
     usersLiked: [],
@@ -90,77 +87,80 @@ exports.getOnepubli = (req, res, next) => {
 /* Modification publi */
 exports.modifypubli = async (req, res, next) => {
   /* On vérifie qu'il y ait bien des données envoyées  */
-  if (
-    (req.file && !req.body.publi) ||
-    (!req.file && req.body.publi) ||
-    (!req.file && !req.body) ||
-    (!req.file && !req.body.publi)
-  ) {
+  if (!req.file && !req.body) {
     res.status(400).json({ error: "Format des données non valide" });
     return;
   }
 
-  const publiObject = req.file
-    ? /* Si oui, on traite la nouvelle image */
-      {
-        ...JSON.parse(req.body.publi),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
-        }`,
-      }
-    : /* Si non, on traite l'objet entrant */
-      { ...req.body };
+  const publiObject =
+    req.file && req.body.publi
+      ? /* Si oui, on traite la nouvelle image */
+        {
+          ...JSON.parse(req.body.publi),
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`,
+        }
+      : req.file
+      ? {
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`,
+        } /* Si non, on traite l'objet entrant */
+      : { ...req.body };
   delete publiObject.userId;
 
   /* On verifie qu'il n'y ait pas de caractères spéciaux  */
-  if (!fieldChecker(req)) {
-    res.status(400).json({
-      error: "Format des données non valide. Caractères spéciaux non autorisés",
-    });
+  // if (publiObject.content) {
+  //   if (!fieldChecker(req)) {
+  //     res.status(400).json({
+  //       error:
+  //         "Format des données non valide. Caractères spéciaux non autorisés",
+  //     });
+  //     supprImage(req);
+  //     return;
+  //   }
+  // }
+  /* Verifiation de l'extension du fichier s'il y en a un  */
+  if (req.file && !extChecker(req)) {
+    res.status(400).json({ error: "extension non valide" });
     supprImage(req);
     return;
-  } else {
-    /* Verifiation de l'extension du fichier s'il y en a un  */
-    if (req.file && !extChecker(req)) {
-      res.status(400).json({ error: "extension non valide" });
-      supprImage(req);
-      return;
-    }
-    let resp = await checkAdmin(req);
-    /* Modification de la publi */
-    Publi.findOne({ _id: req.params.id })
-      .then((publi) => {
-        if (!publi) {
-          res.status(400).json({ error: "ID non valide" });
-          supprImage(req);
-          return;
-        }
-
-        //  console.log(admin);
-        /* Puis on vérifie que le requérant est bien propriétaire de l'objet */
-        if (publi.userId != req.auth.userId && resp == 0) {
-          res.status(403).json({ error: "unauthorized request" });
-        } else {
-          Publi.updateOne(
-            { _id: req.params.id },
-            { ...publiObject, _id: req.params.id }
-          )
-            .then(() => {
-              /* Si une image est jointe, on supprime l'ancienne image */
-              //    fs.unlink(publi.imageUrl, (error) => { console.log(error); })
-              if (req.file) {
-                supprImage(publi);
-              }
-
-              res.status(200).json({ message: "Objet modifié!" });
-            })
-            .catch((error) => res.status(401).json({ error }));
-        }
-      })
-      .catch((error) => {
-        res.status(400).json({ error });
-      });
   }
+  let resp = await checkAdmin(req);
+  /* Modification de la publi */
+  Publi.findOne({ _id: req.params.id })
+    .then((publi) => {
+      if (!publi) {
+        res.status(400).json({ error: "ID non valide" });
+        supprImage(req);
+        return;
+      }
+
+      //  console.log(admin);
+      /* Puis on vérifie que le requérant est bien propriétaire de l'objet */
+      if (publi.userId != req.auth.userId && resp == 0) {
+        res.status(403).json({ error: "unauthorized request" });
+      } else {
+        Publi.updateOne(
+          { _id: req.params.id },
+          { ...publiObject, _id: req.params.id }
+        )
+          .then(() => {
+            /* Si une image est jointe, on supprime l'ancienne image */
+            //    fs.unlink(publi.imageUrl, (error) => { console.log(error); })
+            if (req.file) {
+              supprImage(publi);
+            }
+
+            res.status(200).json({ message: "Objet modifié!" });
+          })
+          .catch((error) => res.status(401).json({ error }));
+      }
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
 };
 
 /* Delete publi */
@@ -169,7 +169,12 @@ exports.deletepubli = async (req, res, next) => {
   console.log(req.params.id);
   Publi.findOne({ _id: req.params.id })
     .then((publi) => {
-      console.log(publi);
+      console.log(
+        "publi.userId : " +
+          publi.userId +
+          "req.auth.userId : " +
+          req.auth.userId
+      );
       if (publi.userId != req.auth.userId && resp == 0) {
         res.status(401).json({ error: "Not authorized" });
       } else {
@@ -311,7 +316,7 @@ const supprArrayLike = (publi, idUser, tableLikeDislike) => {
 const fieldChecker = (req) => {
   let publiFields;
   if (req.body.publi) {
-    publiFields = JSON.parse(req.body.publi);
+    publiFields = JSON.parse(req.body.publi) || req.body.publi;
   } else {
     publiFields = req.body;
   }
@@ -380,4 +385,22 @@ const checkAdmin = async (req) => {
       console.log(error);
     });
   return resp;
+};
+
+const getName = async (userId) => {
+  let userName = "";
+  await User.findOne({ _id: userId })
+    .then((user) => {
+      console.log("userid : " + userId + " user._id = " + user._id);
+      userName =
+        user.firstname[0].toUpperCase() +
+        user.firstname.slice(1) +
+        " " +
+        user.lastname[0].toUpperCase() +
+        user.lastname.slice(1);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return userName;
 };

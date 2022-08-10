@@ -3,7 +3,7 @@ import { findAll } from "../requests/publicationRequest";
 import Publication from "../components/Publication";
 import Logo from "../components/Logo";
 import Header from "../components/Header";
-
+import PublicationForm from "../components/PublicationForm";
 function Home() {
   const [publications, setPublications] = useState(null);
   const [error, setErrors] = useState(null);
@@ -11,10 +11,10 @@ function Home() {
     const getPublications = async () => {
       const response = await findAll();
       if (response.status === 200) {
-        console.log("******* getMessages ");
+        // console.log("******* getMessages ");
         setPublications(response.data);
       } else {
-        console.log(response);
+        // console.log(response);
         setErrors(response.data);
       }
     };
@@ -30,17 +30,23 @@ function Home() {
         <Header />
       </header>
       <section>
-        {/* faire un composent <MessageForm /> pour ajouter un message */}
-        <h1>Voici les derniers posts en cours 👩‍💻👨‍💻👩‍💻</h1>
+        <PublicationForm />
+        <div className="publicationWrapper">
+          <h1>Publications récentes 👩‍💻👨‍💻 </h1>
 
-        {publications ? (
-          publications.map((publication) => (
-            // <span key={publication._id}>{publication.content}</span>
-            <Publication key={publication._id} publication={publication} />
-          ))
-        ) : (
-          <span className="errorSpan">${error}</span>
-        )}
+          {publications ? (
+            publications.map((publication) => (
+              // <span key={publication._id}>{publication.content}</span>
+              <Publication
+                key={publication._id}
+                publication={publication}
+                index={publications.indexOf(publication)}
+              />
+            ))
+          ) : (
+            <span className="errorSpan">{error}</span>
+          )}
+        </div>
       </section>
     </div>
   );

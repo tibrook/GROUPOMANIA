@@ -3,3 +3,11 @@
 @import "./components/logo";
 @import "./components/publication";
 @import "./components/likes"; // @import "./components/card";
+body {
+  background: $black2;
+  color: $white;
+}
+a {
+  text-decoration: none;
+  color: white;
+}

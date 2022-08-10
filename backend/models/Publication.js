@@ -8,6 +8,7 @@ const publiSchema = mongoose.Schema({
   likes: { type: Number, required: true },
   dislikes: { type: Number, required: true },
   usersLiked: { type: Array, required: true },
+  author: { type: String, required: true },
   usersDisliked: { type: Array, required: true },
   createdAt: { type: Date, required: true },
 });

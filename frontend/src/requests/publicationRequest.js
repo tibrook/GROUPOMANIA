@@ -1,11 +1,12 @@
 import axios from "axios";
-
+import { token } from "../utils/conf";
 const apiUrl = "https://localhost:3000/api/";
-const configApi = {
+let configApi = {
   headers: {
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmUyNGJlYTBlNmJlN2Q3ZGI5NzhiNjYiLCJpYXQiOjE2NTk5NDA0MDksImV4cCI6MTY2MDAyNjgwOX0.3jDvP64rfg5DxbHkD9PMrHXxUqW37Y3ytHYJLs6X6zk`,
+    Authorization: `Bearer ${token}`,
   },
 };
+
 const findAll = async () => {
   try {
     return await axios.get(apiUrl + "publication", configApi);
@@ -30,4 +31,39 @@ const sendLike = (like, id) => {
     configApi
   );
 };
-export { findAll, findOne, sendLike };
+const postPublication = (image, content) => {
+  let formData = new FormData();
+  formData.append("image", image);
+  formData.append("publi", `{"content" : "${content}"}`);
+  // if (content.length > 0) {
+  //   publi = { publi: JSON.stringify({ content: content }) };
+  // }
+  console.log(...formData);
+  return axios.post(apiUrl + "publication/", formData, configApi);
+};
+
+const suppressionPublication = (id) => {
+  if (window.confirm("Voulez-vous vraiment supprimer ? ")) {
+    return axios.delete(apiUrl + "publication/" + id, configApi);
+  }
+};
+const modifyPublication = (id, content, image) => {
+  if (image) {
+    let formData = new FormData();
+    formData.append("image", image);
+    if (content.trim().length > 0) {
+      formData.append("publi", `{"content" : "${content}"}`);
+    }
+    return axios.put(apiUrl + "publication/" + id, formData, configApi);
+  } else {
+    return axios.put(apiUrl + "publication/" + id, { content }, configApi);
+  }
+};
+export {
+  findAll,
+  findOne,
+  sendLike,
+  postPublication,
+  suppressionPublication,
+  modifyPublication,
+};
