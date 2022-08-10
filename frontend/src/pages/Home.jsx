@@ -36,7 +36,6 @@ function Home() {
 
           {publications ? (
             publications.map((publication) => (
-              // <span key={publication._id}>{publication.content}</span>
               <Publication
                 key={publication._id}
                 publication={publication}

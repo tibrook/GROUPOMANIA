@@ -3,7 +3,8 @@ import React, { useRef, useState } from "react";
 const SignUp = () => {
   const registerEmail = useRef();
   const registerPassword = useRef();
-  const [displayName, setDisplayName] = useState("");
+  const [displayFirstname, setDisplayFirstame] = useState("");
+  const [displayLastname, setDisplayLastname] = useState("");
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -33,9 +34,15 @@ const SignUp = () => {
         <form onSubmit={(e) => handleRegister(e)}>
           <input
             type="text"
-            placeholder="Pseudo"
+            placeholder="Nom"
             required
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e) => e.target.value}
+          />
+          <input
+            type="text"
+            placeholder="Prénom"
+            required
+            onChange={(e) => setDisplayLastname(e.target.value)}
           />
           <input
             type="email"

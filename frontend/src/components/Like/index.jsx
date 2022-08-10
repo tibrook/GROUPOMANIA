@@ -15,7 +15,7 @@ const Like = ({ publication }) => {
       const result = await findOne(id);
       if (result.data.usersLiked.includes(userId)) {
         // console.log("t'as déjà liké");
-        console.log("userId" + userId + "usersLiked" + result.data.usersLiked);
+        // console.log("userId" + userId + "usersLiked" + result.data.usersLiked);
         setLikeActive(true);
       } else if (result.data.usersDisliked.includes(userId)) {
         // console.log(result.data.usersDisliked);

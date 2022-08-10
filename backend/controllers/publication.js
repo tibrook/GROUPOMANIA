@@ -8,6 +8,14 @@ exports.createpubli = async (req, res, next) => {
   console.log(authorPubli);
   let nameFile;
   let publication;
+  if (req.body.publi.content && !fieldChecker(req)) {
+    console.log("req.body.publi : " + req.body.publi);
+    res
+      .status(400)
+      .json({ error: "Les caractères spéciaux ne sont pas acceptés" });
+    return;
+  }
+
   if (!req.body.publi && !req.file) {
     res.status(400).json({ error: "Il faut au moins une image ou un message" });
     return;
@@ -111,16 +119,16 @@ exports.modifypubli = async (req, res, next) => {
   delete publiObject.userId;
 
   /* On verifie qu'il n'y ait pas de caractères spéciaux  */
-  // if (publiObject.content) {
-  //   if (!fieldChecker(req)) {
-  //     res.status(400).json({
-  //       error:
-  //         "Format des données non valide. Caractères spéciaux non autorisés",
-  //     });
-  //     supprImage(req);
-  //     return;
-  //   }
-  // }
+  if (publiObject.content) {
+    if (!fieldChecker(req)) {
+      res.status(400).json({
+        error:
+          "Format des données non valide. Caractères spéciaux non autorisés",
+      });
+      supprImage(req);
+      return;
+    }
+  }
   /* Verifiation de l'extension du fichier s'il y en a un  */
   if (req.file && !extChecker(req)) {
     res.status(400).json({ error: "extension non valide" });
@@ -315,15 +323,18 @@ const supprArrayLike = (publi, idUser, tableLikeDislike) => {
 // On vérifie qu'il n'y ait pas de caractères spéciaux
 const fieldChecker = (req) => {
   let publiFields;
+  const regexExp =
+    /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
   if (req.body.publi) {
     publiFields = JSON.parse(req.body.publi) || req.body.publi;
   } else {
     publiFields = req.body;
   }
-
+  console.log(publiFields);
   if (
     publiFields.content.trim() == "" ||
-    !publiFields.content.match(/^[a-zA-Z-éÉèç ]*$/)
+    (!publiFields.content.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+      regexExp.test(publiFields.content) == false)
   ) {
     return null;
   } else {
@@ -339,7 +350,13 @@ const extChecker = (image) => {
   const ext = image.file.originalname.substring(
     image.file.originalname.lastIndexOf(".") + 1
   );
-  if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "PNG") {
+  if (
+    ext != "jpg" &&
+    ext != "jpeg" &&
+    ext != "png" &&
+    ext != "PNG" &&
+    ext != "gif"
+  ) {
     return null;
   } else {
     return 1;

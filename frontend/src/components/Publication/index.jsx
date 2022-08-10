@@ -44,8 +44,8 @@ const Publication = ({ publication, index }) => {
   };
 
   const handleEdit = () => {
-    console.log(publication.content);
-    console.log(editImage);
+    // console.log(publication.content);
+    // console.log(editImage);
     if (
       editContent.trim().length === 0 &&
       publication.content.trim().length === 0 &&

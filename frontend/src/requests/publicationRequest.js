@@ -11,7 +11,7 @@ const findAll = async () => {
   try {
     return await axios.get(apiUrl + "publication", configApi);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return error.response;
   }
 };
@@ -19,12 +19,12 @@ const findOne = async (id) => {
   try {
     return await axios.get(apiUrl + "publication/" + id, configApi);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return error.response;
   }
 };
 const sendLike = (like, id) => {
-  console.log(like);
+  // console.log(like);
   return axios.post(
     apiUrl + "publication/" + id + "/like",
     { like },
@@ -38,7 +38,7 @@ const postPublication = (image, content) => {
   // if (content.length > 0) {
   //   publi = { publi: JSON.stringify({ content: content }) };
   // }
-  console.log(...formData);
+  // console.log(...formData);
   return axios.post(apiUrl + "publication/", formData, configApi);
 };
 
