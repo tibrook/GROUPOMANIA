@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { userIdApi } from "../../utils/conf";
+// import { userIdApi } from "../../utils/conf";
 import { findOne } from "../../requests/publicationRequest";
 import { sendLike } from "../../requests/publicationRequest";
 const Like = ({ publication }) => {
@@ -10,9 +10,12 @@ const Like = ({ publication }) => {
   const [dislike, setDislike] = useState(publication.dislikes);
   const [likeActiv, setLikeActive] = useState(false);
   const [disLikeActiv, setDislikeActive] = useState(false);
+  const userIdApi = localStorage.getItem("userId");
+
   useEffect(() => {
     const checkLike = async (id, userId) => {
       const result = await findOne(id);
+      console.log(`userId : ${userId}) usersLiked: ${result.data.usersLiked}`);
       if (result.data.usersLiked.includes(userId)) {
         // console.log("t'as déjà liké");
         // console.log("userId" + userId + "usersLiked" + result.data.usersLiked);
@@ -25,20 +28,24 @@ const Like = ({ publication }) => {
       }
     };
     checkLike(publication._id, userIdApi);
-
-    // console.log(disLikeActiv);
+    console.log(likeActiv);
+    console.log(dislike);
   });
   const likef = async () => {
+    console.log("on like ici ");
+
     // unlike
     if (likeActiv) {
       const response = await sendLike(0, publication._id);
-      //   console.log(response);
+      console.log(response);
       if (response.status === 201) {
         setLikeActive(false);
         setLike(like - 1);
       }
     } else {
       const response = await sendLike(1, publication._id);
+      console.log(response);
+
       if (response.status === 201) {
         setLikeActive(true);
         setLike(like + 1);

@@ -10,6 +10,9 @@ section {
 aside {
   padding: 15px;
 }
+.error {
+  color: red;
+}
 .mainWrapper {
   display: flex;
   flex-wrap: wrap;
@@ -28,6 +31,21 @@ aside {
       flex-direction: column;
       width: 100%;
       padding: 15px 30px;
+      .navigation {
+        width: 40%;
+        display: flex;
+        justify-content: space-between;
+      }
+      .email {
+        position: absolute;
+        left: 80px;
+        top: 70px;
+      }
+      .password {
+        position: absolute;
+        left: 80px;
+        top: 90px;
+      }
 
       p {
         color: red;
@@ -82,6 +100,19 @@ aside {
   transition: 200ms;
 
   .headerPubli {
+    input {
+      cursor: pointer;
+      position: absolute;
+      right: 60px;
+      top: 26px;
+      height: 16px;
+      width: 16px;
+    }
+    button {
+      position: absolute;
+      right: 60px;
+      top: 26px;
+    }
     .authorPubli {
       display: block;
       width: 100%;

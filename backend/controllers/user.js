@@ -31,7 +31,7 @@ exports.signup = (req, res, next) => {
           firstname: req.body.firstname,
           lastname: req.body.lastname,
         });
-
+        console.log(user);
         /* Sauvegarde du user dans la bdd  */
         user
           .save()
@@ -63,6 +63,8 @@ exports.login = (req, res, next) => {
               //Méthode de jwt permettant de chiffrer un nouveau token qui contient l'ID user
               expiresIn: "24h", //Chiffré avec la chaine passée en paramètre
             }),
+            name: `${user.firstname}  ${user.lastname}`,
+            role: user.role
           });
         })
         .catch((error) => res.status(500).json({ error }));

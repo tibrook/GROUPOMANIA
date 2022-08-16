@@ -9,7 +9,8 @@ header {
   align-items: center;
   padding-right: 15px;
 }
-/* .navigation{
-    padding-right: 50px;
-    padding-top: 30px;
-} */
+.navigation {
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+}

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { token } from "../utils/conf";
+// import { token } from "../utils/conf";
 const apiUrl = "https://localhost:3000/api/";
+const token = localStorage.getItem("token")
 let configApi = {
   headers: {
     Authorization: `Bearer ${token}`,
@@ -43,9 +44,10 @@ const postPublication = (image, content) => {
 };
 
 const suppressionPublication = (id) => {
-  if (window.confirm("Voulez-vous vraiment supprimer ? ")) {
-    return axios.delete(apiUrl + "publication/" + id, configApi);
-  }
+
+  return axios.delete(apiUrl + "publication/" + id, configApi);
+
+
 };
 const modifyPublication = (id, content, image) => {
   if (image) {

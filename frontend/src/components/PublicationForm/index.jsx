@@ -2,13 +2,15 @@ import React from "react";
 import { useState } from "react";
 import { postPublication } from "../../requests/publicationRequest";
 import Picker from "emoji-picker-react";
-import "../../utils/conf/";
+// import "../../utils/conf/";
+import { usePublicationsContext } from "../../hooks/usePublicationsContext";
 const PublicationForm = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [error, setError] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
-
+  const { post, dispatchPost } = usePublicationsContext();
+  // console.log(publications);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (window.confirm("Voulez-vous publier ? ")) {
@@ -17,20 +19,26 @@ const PublicationForm = () => {
       } else {
         const regexExp =
           /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
-        console.log(regexExp.test(content));
+        // console.log(regexExp.test(content));
         if (
           !content.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
           !content.match(regexExp)
         ) {
-          console.log("yes");
+          // console.log("yes");
           setError(true);
         } else {
           const res = await postPublication(image, content);
-          // console.log(res);
-          setError(false);
-          setImage("");
-          setContent("");
-          window.location.reload();
+
+          if (res.status === 201) {
+            console.log(res.data);
+            dispatchPost({
+              type: "CREATE_PUBLICATION",
+              payload: res.data.publi,
+            });
+            setError(false);
+            setImage("");
+            setContent("");
+          }
         }
       }
     }
@@ -38,7 +46,6 @@ const PublicationForm = () => {
 
   const onEmojiClick = (event, emojiObject) => {
     setContent((content) => content + emojiObject.emoji);
-    console.log(content);
     setShowPicker(false);
   };
   return (
@@ -46,11 +53,11 @@ const PublicationForm = () => {
       <h1>Créer une publication</h1>
       <form onSubmit={(e) => handleSubmit(e)}>
         <div className="picker-container">
-          <input
+          <textarea
             className="input-style"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-          />
+          ></textarea>
 
           <img
             className="emoji-icon"
