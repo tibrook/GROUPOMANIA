@@ -10,7 +10,8 @@ const signup = async (email, password, firstname, lastname) => {
     }
 
     catch (error) {
-        return error.response.data.error.message;
+        console.log(error);
+        return error.response.data.error;
     }
 }
 const login = async (email, password) => {

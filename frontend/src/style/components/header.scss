@@ -14,3 +14,43 @@ header {
   display: flex;
   justify-content: space-between;
 }
+.faLogout {
+  display: none;
+}
+/* Téléphones */
+@media screen and (max-width: 760px) {
+  a {
+    width: 30%;
+    .logo {
+      height: 50px;
+      width: 120px;
+    }
+  }
+  .navigation {
+    text-align: right;
+    // flex-direction: column;
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    a {
+      text-align: left;
+      width: 60%;
+    }
+  }
+  .faLogout {
+    display: block;
+  }
+  li {
+    display: none;
+  }
+  .spanUsername {
+    display: none;
+  }
+}
+/* Tablettes */
+@media screen and (min-width: 760px) and (max-width: 1024px) {
+  header {
+    width: 98%;
+    height: auto;
+  }
+}

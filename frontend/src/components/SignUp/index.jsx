@@ -24,7 +24,14 @@ const SignUp = () => {
   const passwordHasSpecialCharacter =
     /[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]/.test(registerPassword);
   const passwordHasNumber = /[0-9]/.test(registerPassword);
-  const emailIsValid = /^[\w_\.-]+@groupomania.fr/.test(registerEmail);
+  let emailIsValid;
+  // const emailIsValid = registerEmail.match(/^([\w_.-]+@groupomania.fr)/gm);
+  // console.log(emailIsValid);
+  if (!registerEmail.match(/^[\w_\.-]+@groupomania.fr$/i)) {
+    emailIsValid = false;
+  } else {
+    emailIsValid = true;
+  }
   const passwordIsValid =
     passwordHasValidLength &&
     passwordHasLowercaseLetter &&
@@ -45,36 +52,18 @@ const SignUp = () => {
       displayFirstname,
       displayLastname
     );
+    console.log(response);
     if (response.status !== 201) {
       console.log(response);
       setError(true);
-      alert(response);
+      alert(response.message);
       // setErrorContent(response);
     } else {
       dispatchUser({
         type: "REGISTER",
-        payload: { auth: true },
+        payload: { user: {} },
       });
-      const response = await login(registerEmail, registerPassword);
-      if (response.status === 200) {
-        console.log(response);
-        dispatchUser({
-          type: "LOGIN",
-          payload: response.data,
-        });
-        await localStorage.setItem("userId", response.data.userId);
-        await localStorage.setItem("token", response.data.token);
-        await localStorage.setItem("name", response.data.name);
-        await localStorage.setItem("role", response.data.role);
-
-        history("/");
-      } else {
-        setError(true);
-        setErrorContent(response.data.error);
-      }
-
-      // console.log(user);
-      console.log(response);
+      history("/");
       setError(false);
     }
   };
@@ -82,20 +71,20 @@ const SignUp = () => {
   return (
     <div className="signup-container">
       <div className="signup">
-        <h3>S'inscrire</h3>
+        <h1>S'inscrire</h1>
         <form onSubmit={(e) => handleRegister(e)} className="signupForm">
           <div className="labelForm">
             <label htmlFor="name" className="inscription_label_nom">
               Nom :{" "}
             </label>
             <label htmlFor="prenom" className="inscription_label_prenom">
-              prenom :{" "}
+              Prénom :{" "}
             </label>
             <label htmlFor="email" className="inscription_label_email">
-              email :{" "}
+              Email :{" "}
             </label>
             <label htmlFor="password" className="inscription_label_password">
-              password :{" "}
+              Password :{" "}
             </label>
           </div>
           <div className="contentForm">
@@ -111,6 +100,9 @@ const SignUp = () => {
                 border: firstnameIsValid ? "1px solid green" : "1px solid red",
               }}
             />
+            {displayFirstname.length > 0 && !firstnameIsValid ? (
+              <p>Caractères spéciaux non autorisés</p>
+            ) : null}
             <input
               id="prenom"
               type="text"
@@ -123,6 +115,9 @@ const SignUp = () => {
                 border: lastnameIsValid ? "1px solid green" : "1px solid red",
               }}
             />
+            {displayLastname.length > 0 && !lastnameIsValid ? (
+              <p>Caractères spéciaux non autorisés</p>
+            ) : null}
             <input
               id="email"
               type="email"
@@ -135,6 +130,11 @@ const SignUp = () => {
                 border: emailIsValid ? "1px solid green" : "1px solid red",
               }}
             />
+            {registerEmail.length > 0 && !emailIsValid ? (
+              <span>
+                Le mail doit être du format suivant : ***@groupomania.fr
+              </span>
+            ) : null}
             <div className="passwordWrapper">
               <input
                 id="password"
@@ -161,11 +161,12 @@ const SignUp = () => {
             <input
               type="submit"
               value="Valider inscription"
+              className="btn_envoyer"
               disabled={
                 !passwordIsValid ||
-                !firstnameIsValid ||
-                !emailIsValid ||
-                !lastnameIsValid
+                  !firstnameIsValid ||
+                  !emailIsValid ||
+                  !lastnameIsValid
                   ? true
                   : false
               }

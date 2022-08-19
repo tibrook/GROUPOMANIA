@@ -14,7 +14,9 @@
 
   .connect-modal {
     height: 100%;
-
+    .errorContent {
+      font-weight: bold;
+    }
     .header-btn {
       position: absolute;
       left: 0;
@@ -40,7 +42,7 @@
       min-height: 210px;
       @include verticalCenter;
 
-      h3 {
+      h1 {
         margin-bottom: 8px;
       }
       /* Formulaire d'inscription */
@@ -84,23 +86,26 @@
             .inscription_label_password {
               top: 135px;
             }
-            input {
-              // width: 100%;
-            }
-            svg {
+            .fa-eye {
               cursor: pointer;
               position: absolute;
               top: 12px;
             }
           }
         }
-
-        .icon_eye_login {
-          cursor: pointer;
-          position: absolute;
-          right: 130px;
-          top: 130px;
+        .contentForm {
+          span {
+            display: block;
+            width: 100%;
+            font-size: 1rem;
+          }
+          .icon_eye {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+          }
         }
+
         .email {
           position: absolute;
           left: 80px;
@@ -203,12 +208,21 @@ input[type="submit"] {
   background: none;
   border: none;
   cursor: pointer;
+  color: white;
   background: $color1;
   transition: 0.2s;
 
   &:hover {
     filter: brightness(80%);
     transform: translateX(2px);
+  }
+}
+input[type="submit"]:disabled {
+  background: rgb(95, 91, 91);
+  cursor: default;
+  &:hover {
+    transform: none;
+    filter: none;
   }
 }
 
@@ -220,4 +234,36 @@ textarea {
   margin: 5px;
   padding: 8px;
   background: $white;
+}
+@media screen and (max-width: 768px) {
+  .app-Header {
+    .connect-modal {
+      .login {
+        width: 80%;
+      }
+      .signup {
+        .signupForm {
+          .contentForm {
+            input {
+              width: 100%;
+            }
+          }
+        }
+      }
+      .signup-container {
+        .signupForm {
+          .labelForm {
+            display: none;
+          }
+        }
+      }
+      .login-container {
+        .form-login {
+          label {
+            display: none;
+          }
+        }
+      }
+    }
+  }
 }

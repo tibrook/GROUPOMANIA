@@ -9,7 +9,7 @@ const PublicationForm = () => {
   const [image, setImage] = useState("");
   const [error, setError] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
-  const { post, dispatchPost } = usePublicationsContext();
+  const { dispatchPublications } = usePublicationsContext();
   // console.log(publications);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ const PublicationForm = () => {
 
           if (res.status === 201) {
             console.log(res.data);
-            dispatchPost({
+            dispatchPublications({
               type: "CREATE_PUBLICATION",
               payload: res.data.publi,
             });
@@ -53,7 +53,9 @@ const PublicationForm = () => {
       <h1>Créer une publication</h1>
       <form onSubmit={(e) => handleSubmit(e)}>
         <div className="picker-container">
+          <label htmlFor="areaContentForm">Publier votre message</label>
           <textarea
+            id="areaContentForm"
             className="input-style"
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -74,8 +76,13 @@ const PublicationForm = () => {
         </div>
 
         <div className="footerPubli">
+          <label htmlFor="inputFile" id="label">
+            Upload
+          </label>
+
           <input
             type="file"
+            id="inputFile"
             name="imageUpload"
             className="imageUpload"
             onChangeCapture={(e) => setImage(e.target.files[0])}

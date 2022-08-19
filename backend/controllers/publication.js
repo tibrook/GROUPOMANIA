@@ -41,9 +41,8 @@ exports.createpubli = async (req, res, next) => {
       supprImage(req);
       return;
     } else {
-      nameFile = `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`;
+      nameFile = `${req.protocol}://${req.get("host")}/images/${req.file.filename
+        }`;
     }
   } else {
     nameFile = null;
@@ -92,8 +91,37 @@ exports.getOnepubli = (req, res, next) => {
       });
     });
 };
+
+/* Find One publi */
+exports.getPubliByUserId = (req, res, next) => {
+  Publi.find({
+    userId: req.params.id,
+  })
+    .then((publi) => {
+      if (!publi) {
+        res.status(404).json({
+          error: "userid non valide",
+        });
+      } else {
+        for (let i = 0; i < publi.length; i++) {
+          publi.sort(function (a, b) {
+            return b.createdAt - a.createdAt;
+          });
+        }
+        res.status(200).json(publi);
+      }
+    })
+    .catch((error) => {
+      res.status(404).json({
+        error: error,
+      });
+    });
+};
 /* Modification publi */
 exports.modifypubli = async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
+  console.log(req.body.deleteImage);
   /* On vérifie qu'il y ait bien des données envoyées  */
   if (!req.file && !req.body) {
     res.status(400).json({ error: "Format des données non valide" });
@@ -103,23 +131,23 @@ exports.modifypubli = async (req, res, next) => {
   const publiObject =
     req.file && req.body.publi
       ? /* Si oui, on traite la nouvelle image */
-        {
-          ...JSON.parse(req.body.publi),
-          imageUrl: `${req.protocol}://${req.get("host")}/images/${
-            req.file.filename
+      {
+        ...JSON.parse(req.body.publi),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
           }`,
-        }
+      }
       : req.file
-      ? {
-          imageUrl: `${req.protocol}://${req.get("host")}/images/${
-            req.file.filename
-          }`,
+        ? {
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+            }`,
         } /* Si non, on traite l'objet entrant */
-      : { ...req.body };
+        : req.body.deleteImage ? { ...req.body, imageUrl: ``, }
+          : { ...req.body };
   delete publiObject.userId;
-
+  // console.log(`PubliObject :  ${publiObject} `);
   /* On verifie qu'il n'y ait pas de caractères spéciaux  */
   if (publiObject.content) {
+    // console.log("content");
     if (!fieldChecker(req)) {
       res.status(400).json({
         error:
@@ -138,7 +166,7 @@ exports.modifypubli = async (req, res, next) => {
   let resp = await checkAdmin(req);
   /* Modification de la publi */
   Publi.findOne({ _id: req.params.id })
-    .then((publi) => {
+    .then(async (publi) => {
       if (!publi) {
         res.status(400).json({ error: "ID non valide" });
         supprImage(req);
@@ -150,18 +178,24 @@ exports.modifypubli = async (req, res, next) => {
       if (publi.userId != req.auth.userId && resp == 0) {
         res.status(403).json({ error: "unauthorized request" });
       } else {
-        Publi.updateOne(
+        await Publi.updateOne(
           { _id: req.params.id },
           { ...publiObject, _id: req.params.id }
         )
-          .then(() => {
-            /* Si une image est jointe, on supprime l'ancienne image */
-            //    fs.unlink(publi.imageUrl, (error) => { console.log(error); })
+          .then(async () => {
             if (req.file) {
               supprImage(publi);
             }
+            Publi.findOne({ _id: req.params.id }).then((publi) => {
+              // console.log(publi);
+              res.status(200).json({ publi });
+            })
+            // console.log(Publi);
+            /* Si une image est jointe, on supprime l'ancienne image */
+            //    fs.unlink(publi.imageUrl, (error) => { console.log(error); })
 
-            res.status(200).json({ message: "Objet modifié!" });
+
+
           })
           .catch((error) => res.status(401).json({ error }));
       }
@@ -179,9 +213,9 @@ exports.deletepubli = async (req, res, next) => {
     .then((publi) => {
       console.log(
         "publi.userId : " +
-          publi.userId +
-          "req.auth.userId : " +
-          req.auth.userId
+        publi.userId +
+        "req.auth.userId : " +
+        req.auth.userId
       );
       if (publi.userId != req.auth.userId && resp == 0) {
         res.status(401).json({ error: "Not authorized" });

@@ -13,65 +13,70 @@ const Login = () => {
   const { user, dispatchUser } = useUserContext(UserContext);
   const [passwordIdVisible, setPasswordIsVisible] = useState(false);
 
-  let history = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     const response = await login(loginEmail, loginPassword);
     if (response.status === 200) {
-      dispatchUser({
+      await dispatchUser({
         type: "LOGIN",
         payload: response.data,
       });
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("name", response.data.name);
-      localStorage.setItem("role", response.data.role);
-
-      history("/");
     } else {
       setError(true);
-      console.log(response);
       setErrorContent(response.data.error || response.data);
     }
-    console.log(user);
   };
 
   return (
-    <div className="login-container">
-      <div className="login">
-        <h3>Se connecter</h3>
-        <form className="form-login" onSubmit={(e) => handleLogin(e)}>
-          <label htmlFor="email" className="email">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            onChange={(e) => {
-              setLoginEmail(e.target.value);
-            }}
-          />
-          <label htmlFor="password" className="password">
-            password
-          </label>
-          <input
-            type={passwordIdVisible ? "text" : "password"}
-            placeholder="Mot de passe"
-            required
-            onChange={(e) => {
-              setLoginPassword(e.target.value);
-            }}
-          />{" "}
-          <FontAwesomeIcon
-            icon={passwordIdVisible ? faEyeSlash : faEye}
-            onClick={() => setPasswordIsVisible((prevState) => !prevState)}
-            className="icon_eye icon_eye_login"
-          />
-          <input type="submit" value="Se connecter" />
-          {error ? <span>{errorContent}</span> : null}
-        </form>
+    <div className="form-container">
+
+
+      <div className="login-container">
+        <div className="login">
+          <h1>Se connecter</h1>
+          <form className="form-login" onSubmit={(e) => handleLogin(e)}>
+            <label htmlFor="email" className="email">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Email"
+              required
+              onChange={(e) => {
+                setLoginEmail(e.target.value);
+              }}
+            />
+            <label htmlFor="password" className="password">
+              password
+            </label>
+            <input
+              id="password"
+              type={passwordIdVisible ? "text" : "password"}
+              placeholder="Mot de passe"
+              required
+              onChange={(e) => {
+                setLoginPassword(e.target.value);
+              }}
+            />{" "}
+            <FontAwesomeIcon
+              icon={passwordIdVisible ? faEyeSlash : faEye}
+              onClick={() => setPasswordIsVisible((prevState) => !prevState)}
+              className="icon_eye icon_eye_login"
+            />
+            <input type="submit" className="btn_envoyer"
+              disabled={
+                !loginEmail ||
+
+                  !loginPassword
+                  ? true
+                  : false
+              } value="Se connecter" />
+          </form>
+        </div>
       </div>
+      {error ? <span className="errorContent">{errorContent}</span> : null}
+
     </div>
   );
 };

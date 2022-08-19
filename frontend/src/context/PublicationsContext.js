@@ -16,19 +16,14 @@ export const publicationReducer = (state, action) => {
                         publication._id !== action.payload)
                 ]
             };
-
-
-        // case "DELETE_PUBLICATIONS":
-        //     for (let i in action.payload) {
-        //         const {publications = ...state.publications};
-        //     }
-
         case "UPDATE_PUBLICATION":
+            console.log(action.payload);
             return {
                 publications: [
                     ...state.publications.map((publication) => publication._id === action.payload._id ? action.payload : publication)
                 ]
             };
+
         default:
             return state;
     }

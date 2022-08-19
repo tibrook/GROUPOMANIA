@@ -4,14 +4,22 @@ import { useState } from "react";
 import {
   suppressionPublication,
   modifyPublication,
+  deleteImage,
 } from "../../requests/publicationRequest";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faTrashCan,
+  faSquarePen,
+  faCheck,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
-
-const Publication = ({ publication, index, selectAll }) => {
+import { Link } from "react-router-dom";
+import { useUserContext } from "../../hooks/useUserContext";
+const Publication = ({ publication, index }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editContent, setEditConent] = useState("");
+  const [editContent, setEditConent] = useState(publication.content);
   const [editImage, setEditImage] = useState("");
   const [isSelectingItem, setIsSelectingItem] = useState(false);
   const [error, setError] = useState(false);
@@ -19,18 +27,25 @@ const Publication = ({ publication, index, selectAll }) => {
   const role = localStorage.getItem("role");
   const [errorContent, setErrorContent] = useState("");
   const [isEditingMenu, setEditingMenu] = useState(false);
+  const { user, dispatchUser } = useUserContext();
+
+  const [isDelitingImage, setIsDelitingImage] = useState(false);
   const { publications, dispatchPublications } = usePublicationsContext();
   let ids = JSON.parse(localStorage.getItem("selectedPost"));
   const [publicationsIds, setPublicationsIds] = useState([]);
   const handleDelete = async () => {
-    const response = await suppressionPublication(publication._id);
-    if (response.status === 204) {
-      dispatchPublications({
-        type: "DELETE_PUBLICATION",
-        payload: publication._id,
-      });
+    if (window.confirm("Voulez-vous supprimer la publication ?")) {
+      const response = await suppressionPublication(publication._id);
+      if (response.status === 204) {
+        dispatchPublications({
+          type: "DELETE_PUBLICATION",
+          payload: publication._id,
+        });
+      } else {
+        setError(true);
+      }
     } else {
-      setError(true);
+      return;
     }
   };
   const creationDate = (date) => {
@@ -61,8 +76,8 @@ const Publication = ({ publication, index, selectAll }) => {
 
   const handleEdit = async () => {
     if (
+      editContent &&
       editContent.trim().length === 0 &&
-      publication.content.trim().length === 0 &&
       !editImage &&
       !publication.imageUrl
     ) {
@@ -70,7 +85,9 @@ const Publication = ({ publication, index, selectAll }) => {
       return;
     }
     if (
+      editContent &&
       !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+      editContent &&
       !editContent.match(
         /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi
       )
@@ -83,20 +100,26 @@ const Publication = ({ publication, index, selectAll }) => {
     } else {
       setError(false);
     }
+    const supprContent =
+      editContent && editContent.trim().length === 0 ? false : true;
+    // console.log(supprContent);
+    // console.log(editContent);
     const response = await modifyPublication(
       publication._id,
-      editContent,
-      editImage
+      supprContent ? editContent : null,
+      editImage ? editImage : null,
+      isDelitingImage ? isDelitingImage : false
     );
+    console.log(response.data);
     if (response.status === 200) {
-      dispatchPublications({
+      await dispatchPublications({
         type: "UPDATE_PUBLICATION",
-        payload: {
-          ...publication,
-          content: editContent,
-          imageUrl: editImage,
-        },
+        payload: response.data.publi,
       });
+      publication = publications.map((publi) =>
+        publi._id === publication._id ? publi : null
+      )[0];
+      setEditImage("");
       setEditingMenu(false);
       setIsEditing(false);
     } else {
@@ -121,7 +144,7 @@ const Publication = ({ publication, index, selectAll }) => {
     ) {
       for (let iduser in ids) {
         try {
-          console.log(iduser);
+          // console.log(iduser);
           await suppressionPublication(ids[iduser]);
           localStorage.removeItem("selectedPost");
           dispatchPublications({
@@ -134,60 +157,49 @@ const Publication = ({ publication, index, selectAll }) => {
       }
     }
   };
-  const selectPost = async (id, checked) => {
-    console.table(publicationsIds);
+  const cancelModif = () => {
+    setEditConent(publication.content);
+    setEditImage("");
+    setIsEditing(false);
+  };
+  const handleDeleteImage = async () => {
+    if (editContent && editContent.trim().length > 0) {
+      if (window.confirm("Voulez-vous supprimer l'image ?")) {
+        if (
+          editContent &&
+          !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+          editContent &&
+          !editContent.match(
+            /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi
+          )
+        ) {
+          setErrorContent(
+            "Les caractères spéciaux ne sont pas acceptés pour le moment.. "
+          );
+          setError(true);
+          return;
+        } else {
+          setError(false);
+        }
+        const resp = await deleteImage(publication, editContent);
 
-    // ids = JSON.parse(localStorage.getItem("selectedPost"));
-    // // console.log(ids);
-    // let selectedPosts;
-    // // console.log(selectedPosts);
-    // if (!localStorage.getItem("selectedPost")) {
-    //   selectedPosts = [];
-    // } else {
-    //   selectedPosts = JSON.parse(localStorage.getItem("selectedPost")) || [
-    //     localStorage.getItem("selectedPost"),
-    //   ];
-    // }
-    if (checked) {
-      setIsSelectingItem(true);
-      // console.log(selectedPosts);
-      // selectedPosts.push(id);
-      console.log(`PublicationsIds avant changement ${publicationsIds}`);
-      console.log(id);
-      // setPublicationsIds(id);
-      // setPublicationsIds((prev) => [...prev, id]);
-      if (publicationsIds.length === 0) {
-        console.log("length a 0");
-        setPublicationsIds([...publicationsIds, id]);
-        console.table(publicationsIds);
-      } else {
-        setPublicationsIds([...publicationsIds, id]);
+        if (resp.status === 200) {
+          setEditImage("");
+          setIsDelitingImage(true);
+          publication.imageUrl = null;
+          publication.content = editContent;
+          setIsEditing(false);
+          setEditConent(editContent);
+        } else {
+          console.log("une erreur est survenue lors de la suppression");
+        }
       }
-      // localStorage.setItem("selectedPost", JSON.stringify(selectedPosts));
-      console.table(publicationsIds);
-
-      // console.log(selectedPosts);
     } else {
-      setIsSelectingItem(false);
-      console.log(`PublicationsIds avant changement ${publicationsIds}`);
-
-      setPublicationsIds(
-        publicationsIds.filter((publication) => publication !== id)
-      );
-      console.log(`PublicationsIds après changement ${publicationsIds}`);
-
-      // if (selectedPosts.filter((e) => e !== id).length === 0) {
-      //   localStorage.removeItem("selectedPost");
-      // } else {
-      //   localStorage.setItem(
-      //     "selectedPost",
-      //     JSON.stringify(selectedPosts.filter((e) => e !== id))
-      //   );
-      // }
-      // console.log(selectedPosts);
+      alert("Il faut au moins une image ou un message.");
+      return;
     }
   };
-  // console.log(selectAll);
+  // console.log(publications.map((publi) => { return (publi._id === publication._id ? publi.createdAt : null) }));
   return (
     <div
       className={`cardWrapper d` + (index + 1)}
@@ -197,7 +209,15 @@ const Publication = ({ publication, index, selectAll }) => {
       }}
     >
       <div className="headerPubli">
-        <span className="authorPubli">{publication.author}</span>
+        <Link
+          to={{
+            pathname: `/user/${publication.userId}`,
+            // state: { author: publication.author },
+          }}
+          state={{ author: publication.author }}
+        >
+          <span className="authorPubli">{publication.author}</span>
+        </Link>
         <span className="dateCreation">
           Posté il y a {creationDate(publication.createdAt)}
         </span>
@@ -218,16 +238,6 @@ const Publication = ({ publication, index, selectAll }) => {
             {ids.length === 1 ? "" : "s"}
           </button>
         ) : null}
-
-        {publication.userId === userId || role === "admin" ? (
-          <input
-            type="checkbox"
-            onChange={(e) => {
-              console.log(e.target.checked);
-              selectPost(publication._id, e.target.checked);
-            }}
-          ></input>
-        ) : null}
       </div>
       <div className={isEditingMenu ? "menuEditing" : "menuEditing menuHidden"}>
         <ul>
@@ -240,6 +250,11 @@ const Publication = ({ publication, index, selectAll }) => {
               Modifier
             </li>
           )}
+          {isEditing ? (
+            <li className="liSuppr" onClick={cancelModif}>
+              Annuler
+            </li>
+          ) : null}
           <li className="liSuppr" onClick={() => handleDelete()}>
             Supprimer
           </li>
@@ -256,10 +271,57 @@ const Publication = ({ publication, index, selectAll }) => {
           {editContent ? editContent : publication.content}
         </span>
       )}
-      <img
-        src={editImage ? editImage.name : publication.imageUrl}
-        alt={editImage ? editImage.name : publication.imageUrl}
-      />
+      {editImage || publication.imageUrl ? (
+        <img
+          src={editImage ? editImage : publication.imageUrl}
+          alt={`De : ${user.name} , ${
+            editImage ? editImage.name : publication.imageUrl
+          }`}
+        />
+      ) : null}
+      <div className="iconWrapper">
+        {isEditing ? (
+          <FontAwesomeIcon
+            icon={faCheck}
+            className="icon_validate"
+            onClick={() => handleEdit()}
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faSquarePen}
+            onClick={() => setIsEditing(true)}
+            className="update_icon"
+          />
+        )}
+        {isEditing ? (
+          <FontAwesomeIcon
+            icon={faXmark}
+            className="icon_cancel"
+            onClick={cancelModif}
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faTrashCan}
+            className="delete_icon"
+            onClick={() => handleDelete()}
+          />
+        )}
+      </div>
+
+      {isEditing && (editImage || publication.imageUrl) ? (
+        <button className="btnSupprImage" onClick={handleDeleteImage}>
+          {" "}
+          Supprimer l'image
+        </button>
+      ) : null}
+
+      {isEditing && (editImage || publication.imageUrl) ? (
+        <FontAwesomeIcon
+          icon={faTrashCan}
+          className="delete_image_icon"
+          onClick={handleDeleteImage}
+        />
+      ) : null}
       {isEditing ? (
         <input
           type="file"

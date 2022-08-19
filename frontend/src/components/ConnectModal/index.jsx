@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Login from "../Login";
 import SignUp from "../SignUp";
-
+import { useUserContext } from "../../hooks/useUserContext";
 const ConnectModal = () => {
-  const [signUp, setSignUp] = useState(true);
+  const { user, dispatchUser } = useUserContext();
 
+  const [signUp, setSignUp] = useState(user ? false : true);
+  // console.log(user);
+  // localStorage.getItem("auth") === false ? setSignUp(true) : setSignUp(false);
   return (
     <div className="connect-modal">
       <div className="header-btn">
@@ -21,7 +24,7 @@ const ConnectModal = () => {
           Se connecter
         </button>
       </div>
-      {signUp ? <SignUp /> : <Login />}
+      {!signUp || user ? <Login /> : <SignUp />}
     </div>
   );
 };

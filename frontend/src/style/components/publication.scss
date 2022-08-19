@@ -19,10 +19,11 @@ aside {
   .createPostContainer {
     border-radius: 10px;
     box-shadow: 4px 0px 15px 5px rgba(0, 0, 0, 0.42);
+    // background-color: $white;
     background-color: $white;
     margin: 15px;
     h1 {
-      color: $color-1;
+      color: rgb(219, 37, 0);
       padding: 15px;
     }
     form {
@@ -31,22 +32,9 @@ aside {
       flex-direction: column;
       width: 100%;
       padding: 15px 30px;
-      .navigation {
-        width: 40%;
-        display: flex;
-        justify-content: space-between;
+      label {
+        display: none;
       }
-      .email {
-        position: absolute;
-        left: 80px;
-        top: 70px;
-      }
-      .password {
-        position: absolute;
-        left: 80px;
-        top: 90px;
-      }
-
       p {
         color: red;
         font-size: 0.8rem;
@@ -77,6 +65,7 @@ aside {
           width: 200px;
         }
         .btnEnvoyer {
+          color: white;
           display: block;
           margin-left: auto;
           width: 80px;
@@ -96,8 +85,49 @@ aside {
   position: relative;
   margin: 15px 0px;
   background-color: #4e5166;
-  border-radius: 30px;
+  border-radius: 15px;
   transition: 200ms;
+  z-index: 1;
+  svg {
+    transition: 200ms;
+    cursor: pointer;
+    text-align: center;
+  }
+  .icon_cancel {
+    &:hover {
+      color: $color-1;
+    }
+  }
+  .icon_validate {
+    &:hover {
+      color: rgb(4, 102, 4);
+    }
+  }
+  .delete_image_icon {
+    &:hover {
+      color: red;
+    }
+  }
+  .iconWrapper {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    svg {
+      display: none;
+    }
+  }
+
+  .btnSupprImage {
+    position: absolute;
+    right: 0;
+    top: 70%;
+    margin-right: 15px;
+    border-radius: 15px;
+    padding: 6px;
+  }
 
   .headerPubli {
     input {
@@ -135,6 +165,7 @@ aside {
     border-radius: 7px;
     animation-duration: 0.2s;
     animation-name: slit-in-vertical;
+
     ul {
       margin: 10px;
       li {
@@ -173,15 +204,21 @@ aside {
   .publicationContent {
     margin-top: 15px;
     padding: 10px;
+    margin-bottom: 15px;
     border-radius: 5px;
     color: black;
     background: rgb(243, 243, 243);
   }
   img {
+    cursor: pointer;
     // margin: auto;
     margin: 15px auto;
     max-width: 70%;
     max-height: 70%;
+    &:active {
+      z-index: 1000;
+      transform: scale(1.2);
+    }
   }
   .btnWrapper {
     display: flex;
@@ -200,8 +237,13 @@ aside {
   }
 }
 .footerPost {
-  z-index: 1000;
   margin: auto;
+  z-index: 20;
+  display: flex;
+
+  svg {
+    height: 20px;
+  }
 }
 .cardWrapperModif {
   &:hover {
@@ -270,11 +312,56 @@ aside {
   animation: card-apparition 1s ease-in-out forwards;
   opacity: 0;
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 760px) {
   section {
     width: 98%;
   }
+  .mainWrapper {
+    .createPostContainer {
+      form {
+        .picker-container {
+          .emoji-icon {
+            left: 90%;
+            bottom: 50%;
+          }
+        }
+      }
+    }
+  }
+  .cardWrapper {
+    .headerPubli {
+      svg {
+        display: none;
+      }
+    }
+    .update_icon {
+      display: block;
+    }
+    .delete_icon {
+      display: block;
+    }
+  }
 }
+@media screen and (max-width: 760px) {
+  section {
+    width: 98%;
+  }
+  .cardWrapper {
+    .iconWrapper {
+      svg {
+        display: block;
+      }
+    }
+    button {
+      display: none;
+    }
+    .delete_image_icon {
+      position: absolute;
+      right: 50px;
+    }
+  }
+}
+
 @for $i from 0 to 10 {
   .d#{$i} {
     @include cards-animation();

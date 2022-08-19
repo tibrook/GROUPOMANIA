@@ -24,6 +24,14 @@ const findOne = async (id) => {
     return error.response;
   }
 };
+const findUserPublications = async (userId) => {
+  try {
+    return await axios.get(apiUrl + "publication/user/" + userId, configApi);
+  } catch (error) {
+    // console.log(error);
+    return error.response;
+  }
+}
 const sendLike = (like, id) => {
   // console.log(like);
   return axios.post(
@@ -44,23 +52,48 @@ const postPublication = (image, content) => {
 };
 
 const suppressionPublication = (id) => {
-
   return axios.delete(apiUrl + "publication/" + id, configApi);
-
-
 };
-const modifyPublication = (id, content, image) => {
+const modifyPublication = (id, content, image, isDeliting) => {
+  console.log(content);
+  console.log(image);
+  // console.log(id);
   if (image) {
     let formData = new FormData();
     formData.append("image", image);
-    if (content.trim().length > 0) {
+    if (content && content.trim().length > 0) {
+      console.log("c'est bien");
+      console.log({ content });
       formData.append("publi", `{"content" : "${content}"}`);
+    } else if (!content) {
+      // formData.append("publi", `{"content" : null}`);
+      console.log("c'est null");
     }
+    console.log("on sort ");
+
     return axios.put(apiUrl + "publication/" + id, formData, configApi);
   } else {
-    return axios.put(apiUrl + "publication/" + id, { content }, configApi);
+    if (!content) {
+      console.log("content vide ");
+      return axios.put(apiUrl + "publication/" + id, { content: null }, configApi);
+    }
+    else {
+      console.log("on envoie");
+      return axios.put(apiUrl + "publication/" + id, { content }, configApi);
+
+    }
   }
 };
+const deleteImage = async (publication, content) => {
+  console.log(content);
+  if (content && content.trim().length > 0) {
+
+    return await axios.put(apiUrl + "publication/" + publication._id, { content: content, deleteImage: true }, configApi);
+
+  }
+}
+
+
 export {
   findAll,
   findOne,
@@ -68,4 +101,6 @@ export {
   postPublication,
   suppressionPublication,
   modifyPublication,
+  findUserPublications,
+  deleteImage
 };
