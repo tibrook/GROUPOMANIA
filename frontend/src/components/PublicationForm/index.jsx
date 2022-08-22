@@ -4,19 +4,22 @@ import { postPublication } from "../../requests/publicationRequest";
 import Picker from "emoji-picker-react";
 // import "../../utils/conf/";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
+import { useUserContext } from "../../hooks/useUserContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 const PublicationForm = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [error, setError] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const { dispatchPublications } = usePublicationsContext();
-
+  const { user, dispatchUser } = useUserContext();
   /* Envoi du formulaire */
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(content);
     if (window.confirm("Voulez-vous publier ? ")) {
-      if (content.trim().length === 0 && image.length === 0) {
+      if (content.trim().length === 0 && !image) {
         setError(true);
       } else {
         const regexExp =
@@ -32,7 +35,6 @@ const PublicationForm = () => {
           const res = await postPublication(image, content);
 
           if (res.status === 201) {
-            console.log(res.data);
             dispatchPublications({
               type: "CREATE_PUBLICATION",
               payload: res.data.publi,
@@ -46,8 +48,19 @@ const PublicationForm = () => {
         }
       }
     }
+    console.log(image);
   };
-
+  const handleDeleteImage = () => {
+    if (window.confirm("Voulez-vous supprimer l'image ? ")) {
+      setImage("");
+    }
+    return;
+  };
+  const handleImage = (e) => {
+    console.log(e);
+    setError(false);
+    setImage(e.target.files[0]);
+  };
   /* Emojis */
   const onEmojiClick = (event, emojiObject) => {
     setContent((content) => content + emojiObject.emoji);
@@ -65,7 +78,6 @@ const PublicationForm = () => {
             className="input-style"
             value={content}
             onKeyPress={(e) => (e.key === "Enter" ? handleSubmit(e) : null)}
-            // onKeyUp={(e) => (e.key === "Enter" ? handleSubmit(e) : null)}
             onChange={(e) =>
               e.key === "Enter" ? null : setContent(e.target.value)
             }
@@ -95,9 +107,19 @@ const PublicationForm = () => {
             id="inputFile"
             name="imageUpload"
             className="imageUpload"
-            onChangeCapture={(e) => setImage(e.target.files[0])}
+            onChangeCapture={(e) => handleImage(e)}
             accept="image/png, image/jpeg, image/gif"
           />
+          {image ? (
+            <img src={image.name} className="imgUpload" alt={`${image.name}`} />
+          ) : null}
+          {image ? (
+            <FontAwesomeIcon
+              icon={faTrashCan}
+              className="delete_image"
+              onClick={() => handleDeleteImage()}
+            />
+          ) : null}
           {error && (
             <p>
               Veuillez Sélectionner au moins une image ou un message, les

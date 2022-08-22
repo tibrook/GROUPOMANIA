@@ -59,7 +59,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: user._id,
-            token: jwt.sign({ userId: user._id }, process.env.secret_token, {
+            token: jwt.sign({ userId: user._id, role: user.role }, process.env.secret_token, {
               //Méthode de jwt permettant de chiffrer un nouveau token qui contient l'ID user
               expiresIn: "24h", //Chiffré avec la chaine passée en paramètre
             }),

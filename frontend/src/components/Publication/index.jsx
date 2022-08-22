@@ -16,23 +16,25 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
 import { Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import { useUserContext } from "../../hooks/useUserContext";
 const Publication = ({ publication, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditConent] = useState(publication.content);
-  const [editImage, setEditImage] = useState("");
-  const [isSelectingItem, setIsSelectingItem] = useState(false);
+  const [editImage, setEditImage] = useState(null);
+  const [isSelectingItem] = useState(false);
   const [error, setError] = useState(false);
   const userId = localStorage.getItem("userId");
-  const role = localStorage.getItem("role");
+  const token = jwt_decode(localStorage.getItem("token"));
+
   const [errorContent, setErrorContent] = useState("");
   const [isEditingMenu, setEditingMenu] = useState(false);
-  const { user, dispatchUser } = useUserContext();
+  const { user } = useUserContext();
 
   const [isDelitingImage, setIsDelitingImage] = useState(false);
   const { publications, dispatchPublications } = usePublicationsContext();
   let ids = JSON.parse(localStorage.getItem("selectedPost"));
-  const [publicationsIds, setPublicationsIds] = useState([]);
+  const [publicationsIds] = useState([]);
   const handleDelete = async () => {
     if (window.confirm("Voulez-vous supprimer la publication ?")) {
       const response = await suppressionPublication(publication._id);
@@ -56,19 +58,27 @@ const Publication = ({ publication, index }) => {
     let minutes = Math.floor((secondes % 3600) / 60);
     let seconde = Math.floor((secondes % 3600) % 60);
     let jours = Math.floor((hours / 24) % 60);
-
-    if (secondes <= 59) {
-      response = `${secondes} ${secondes > 1 ? "secondes" : "seconde"}`;
+    let semaines = Math.floor((jours / 7) % 60);
+    if (secondes === 0) {
+      response = `À l'instant`;
+    } else if (secondes <= 59) {
+      response = `Posté il y a ${secondes} ${
+        secondes > 1 ? "secondes" : "seconde"
+      }`;
     } else if (secondes > 59 && secondes < 3600) {
-      response = `${minutes} ${
+      response = `Posté il y a ${minutes} ${
         minutes > 1 ? "minutes" : "minute"
       } et ${seconde} ${seconde > 1 ? "secondes" : "seconde"}`;
     } else if (secondes > 3599 && secondes < 86400) {
-      response = `${hours} ${hours > 1 ? "heures" : "heure"} et ${minutes} ${
-        minutes > 1 ? "minutes" : "minute"
+      response = `Posté il y a ${hours} ${
+        hours > 1 ? "heures" : "heure"
+      } et ${minutes} ${minutes > 1 ? "minutes" : "minute"}`;
+    } else if (hours > 23 && hours < 168) {
+      response = `Posté il y a ${jours} ${jours > 1 ? "jours" : "jour"}`;
+    } else if (hours >= 168) {
+      response = `Posté il y a ${semaines} ${
+        semaines > 1 ? "semaines" : "semaine"
       }`;
-    } else if (hours >= 24) {
-      response = `${jours} ${jours > 1 ? "jours" : "jour"}`;
     }
 
     return response;
@@ -76,7 +86,6 @@ const Publication = ({ publication, index }) => {
 
   const handleEdit = async () => {
     if (
-      editContent &&
       editContent.trim().length === 0 &&
       !editImage &&
       !publication.imageUrl
@@ -84,6 +93,10 @@ const Publication = ({ publication, index }) => {
       alert("Il faut au moins un message ou une image");
       return;
     }
+    console.log(!editImage);
+    console.log(editContent.trim().length === 0);
+    console.log(editContent);
+    console.log(!publication.imageUrl);
     if (
       editContent &&
       !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
@@ -199,7 +212,6 @@ const Publication = ({ publication, index }) => {
       return;
     }
   };
-  // console.log(publications.map((publi) => { return (publi._id === publication._id ? publi.createdAt : null) }));
   return (
     <div
       className={`cardWrapper d` + (index + 1)}
@@ -219,11 +231,11 @@ const Publication = ({ publication, index }) => {
           <span className="authorPubli">{publication.author}</span>
         </Link>
         <span className="dateCreation">
-          Posté il y a {creationDate(publication.createdAt)}
+          {creationDate(publication.createdAt)}
         </span>
         <FontAwesomeIcon
           className={
-            publication.userId === userId || role === "admin"
+            publication.userId === userId || token.role === "admin"
               ? "faBars"
               : "faHidden"
           }
@@ -280,32 +292,36 @@ const Publication = ({ publication, index }) => {
         />
       ) : null}
       <div className="iconWrapper">
-        {isEditing ? (
+        {isEditing &&
+        (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faCheck}
             className="icon_validate"
             onClick={() => handleEdit()}
           />
-        ) : (
+        ) : !isEditing &&
+          (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faSquarePen}
             onClick={() => setIsEditing(true)}
             className="update_icon"
           />
-        )}
-        {isEditing ? (
+        ) : null}
+        {isEditing &&
+        (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faXmark}
             className="icon_cancel"
             onClick={cancelModif}
           />
-        ) : (
+        ) : !isEditing &&
+          (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faTrashCan}
             className="delete_icon"
             onClick={() => handleDelete()}
           />
-        )}
+        ) : null}
       </div>
 
       {isEditing && (editImage || publication.imageUrl) ? (

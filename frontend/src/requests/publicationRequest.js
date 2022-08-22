@@ -1,7 +1,7 @@
 import axios from "axios";
+
 // import { token } from "../utils/conf";
 const apiUrl = "https://localhost:3000/api/";
-
 
 const getConfig = async () => {
   const token = await localStorage.getItem("token");
@@ -9,6 +9,7 @@ const getConfig = async () => {
     headers: { Authorization: `Bearer ${token}`, },
   })
 }
+
 /* Récuperation des posts  */
 const findAll = async () => {
   try {

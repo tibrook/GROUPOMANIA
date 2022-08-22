@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { login } from "../../requests/userRequest";
 import { useUserContext } from "../../hooks/useUserContext";
-import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +9,7 @@ const Login = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [error, setError] = useState(false);
   const [errorContent, setErrorContent] = useState("");
-  const { user, dispatchUser } = useUserContext(UserContext);
+  const { dispatchUser } = useUserContext(UserContext);
   const [passwordIdVisible, setPasswordIsVisible] = useState(false);
 
   const handleLogin = async (e) => {
@@ -29,8 +28,6 @@ const Login = () => {
 
   return (
     <div className="form-container">
-
-
       <div className="login-container">
         <div className="login">
           <h1>Se connecter</h1>
@@ -64,19 +61,16 @@ const Login = () => {
               onClick={() => setPasswordIsVisible((prevState) => !prevState)}
               className="icon_eye icon_eye_login"
             />
-            <input type="submit" className="btn_envoyer"
-              disabled={
-                !loginEmail ||
-
-                  !loginPassword
-                  ? true
-                  : false
-              } value="Se connecter" />
+            <input
+              type="submit"
+              className="btn_envoyer"
+              disabled={!loginEmail || !loginPassword ? true : false}
+              value="Se connecter"
+            />
           </form>
         </div>
       </div>
       {error ? <span className="errorContent">{errorContent}</span> : null}
-
     </div>
   );
 };

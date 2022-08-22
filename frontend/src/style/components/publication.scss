@@ -54,13 +54,24 @@ aside {
         .emoji-icon {
           cursor: pointer;
           position: absolute;
-          bottom: -33px;
-          left: 40%;
+          top: 38%;
+          right: 15%;
         }
       }
       .footerPubli {
         display: flex;
         justify-content: space-between;
+        align-items: baseline;
+        img {
+          width: auto;
+          height: 40px;
+          color: black;
+          font-size: 0.7rem;
+        }
+        .delete_image {
+          padding-left: 10px;
+          color: black;
+        }
         .imageUpload {
           width: 200px;
         }
@@ -75,6 +86,9 @@ aside {
   }
   .publicationWrapper {
     padding: 15px;
+    .noPubli {
+      padding-top: 30px;
+    }
   }
 }
 .cardWrapper {
@@ -104,6 +118,7 @@ aside {
     }
   }
   .delete_image_icon {
+    display: none;
     &:hover {
       color: red;
     }
@@ -130,6 +145,7 @@ aside {
   }
 
   .headerPubli {
+    width: 50%;
     input {
       cursor: pointer;
       position: absolute;
@@ -312,6 +328,7 @@ aside {
   animation: card-apparition 1s ease-in-out forwards;
   opacity: 0;
 }
+/* Mobiles */
 @media screen and (max-width: 760px) {
   section {
     width: 98%;
@@ -334,23 +351,16 @@ aside {
         display: none;
       }
     }
+    .iconWrapper {
+      svg {
+        display: block;
+      }
+    }
     .update_icon {
       display: block;
     }
     .delete_icon {
       display: block;
-    }
-  }
-}
-@media screen and (max-width: 760px) {
-  section {
-    width: 98%;
-  }
-  .cardWrapper {
-    .iconWrapper {
-      svg {
-        display: block;
-      }
     }
     button {
       display: none;
@@ -361,7 +371,25 @@ aside {
     }
   }
 }
-
+/* Tablettes */
+@media screen and (min-width: 760px) and (max-width: 1096px) {
+  section {
+    width: 98%;
+  }
+}
+@media screen and (max-width: 1400px) {
+  .btnSupprImage {
+    display: none;
+  }
+  .cardWrapper {
+    .delete_image_icon {
+      display: block;
+      position: absolute;
+      right: 75px;
+      top: 60%;
+    }
+  }
+}
 @for $i from 0 to 10 {
   .d#{$i} {
     @include cards-animation();

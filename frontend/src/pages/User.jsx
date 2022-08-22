@@ -29,11 +29,8 @@ const User = () => {
         // console.log(response);
       }
     };
-    if (!localStorage.getItem("token")) {
-      history("/login");
-    } else {
-      getPublications();
-    }
+
+    getPublications();
   }, [dispatchPublications, history, userId]);
 
   return (
@@ -50,18 +47,18 @@ const User = () => {
           ) : (
             <h1>Publications de {author}</h1>
           )}
-          {publications ? (
+          {publications && publications.length > 0 ? (
             publications.map((publication) => (
               <Publication
                 key={publication._id}
                 publication={publication}
                 index={publications.indexOf(publication)}
-                isChecked={false}
               />
             ))
           ) : (
-            <span className="errorSpan">{error}</span>
+            <p className="noPubli">Pas de publication pour le moment..</p>
           )}
+          {error ? <span>{error} </span> : null}
         </div>
       </section>
     </div>

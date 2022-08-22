@@ -13,7 +13,7 @@ const SignUp = () => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [displayFirstname, setDisplayFirstame] = useState("");
   const [displayLastname, setDisplayLastname] = useState("");
-  const [setError] = useState(false);
+  const [error, setError] = useState(false);
   const { dispatchUser } = useUserContext();
   const [passwordIdVisible, setPasswordIsVisible] = useState(false);
   const passwordHasValidLength = registerPassword.length >= 8;

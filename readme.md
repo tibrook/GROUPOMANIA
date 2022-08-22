@@ -1,9 +1,20 @@
-## LAUNCH
+## Installation
 
-OPEN /BACKEND FOLDER
+/BACKEND FOLDER
+run `npm install `
+Create .env file with 3 var = {
+secret_db : URL mongodb, secret_password : passd mongodb, HTTPS = true}
 
-`nodemon server`
-++
+/FRONTEND FOLDER
+run `npm install `
 
-OPEN /FRONTEND FOLDER
-`npm run start`
+## Lancement de l'application
+
+/BACKEND FOLDER
+
+run `nodemon server`
+
+&&
+
+/FRONTEND FOLDER
+run `npm run start`
