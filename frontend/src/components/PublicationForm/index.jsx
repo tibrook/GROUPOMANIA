@@ -10,9 +10,11 @@ const PublicationForm = () => {
   const [error, setError] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const { dispatchPublications } = usePublicationsContext();
-  // console.log(publications);
+
+  /* Envoi du formulaire */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(content);
     if (window.confirm("Voulez-vous publier ? ")) {
       if (content.trim().length === 0 && image.length === 0) {
         setError(true);
@@ -38,16 +40,20 @@ const PublicationForm = () => {
             setError(false);
             setImage("");
             setContent("");
+          } else {
+            setError(true);
           }
         }
       }
     }
   };
 
+  /* Emojis */
   const onEmojiClick = (event, emojiObject) => {
     setContent((content) => content + emojiObject.emoji);
     setShowPicker(false);
   };
+
   return (
     <div className="createPostContainer">
       <h1>Créer une publication</h1>
@@ -58,7 +64,11 @@ const PublicationForm = () => {
             id="areaContentForm"
             className="input-style"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onKeyPress={(e) => (e.key === "Enter" ? handleSubmit(e) : null)}
+            // onKeyUp={(e) => (e.key === "Enter" ? handleSubmit(e) : null)}
+            onChange={(e) =>
+              e.key === "Enter" ? null : setContent(e.target.value)
+            }
           ></textarea>
 
           <img

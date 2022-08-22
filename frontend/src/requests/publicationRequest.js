@@ -1,46 +1,54 @@
 import axios from "axios";
+import { useUserContext } from "../hooks/useUserContext";
 // import { token } from "../utils/conf";
 const apiUrl = "https://localhost:3000/api/";
-const token = localStorage.getItem("token")
-let configApi = {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-};
 
+
+const getConfig = async () => {
+  const token = await localStorage.getItem("token");
+  return ({
+    headers: { Authorization: `Bearer ${token}`, },
+  })
+}
+/* Récuperation des posts  */
 const findAll = async () => {
   try {
-    return await axios.get(apiUrl + "publication", configApi);
+    return await axios.get(apiUrl + "publication", await getConfig());
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     return error.response;
   }
+
 };
+/* Récuprération d'un post avec l'id du post */
 const findOne = async (id) => {
   try {
-    return await axios.get(apiUrl + "publication/" + id, configApi);
+    return await axios.get(apiUrl + "publication/" + id, await getConfig());
   } catch (error) {
     // console.log(error);
     return error.response;
   }
 };
+/* Récupération des publications d'un user  */
 const findUserPublications = async (userId) => {
   try {
-    return await axios.get(apiUrl + "publication/user/" + userId, configApi);
+    return await axios.get(apiUrl + "publication/user/" + userId, await getConfig());
   } catch (error) {
     // console.log(error);
     return error.response;
   }
 }
-const sendLike = (like, id) => {
+/* Ajout like  */
+const sendLike = async (like, id) => {
   // console.log(like);
   return axios.post(
     apiUrl + "publication/" + id + "/like",
     { like },
-    configApi
+    await getConfig()
   );
 };
-const postPublication = (image, content) => {
+/* Ajout publication  */
+const postPublication = async (image, content) => {
   let formData = new FormData();
   formData.append("image", image);
   formData.append("publi", `{"content" : "${content}"}`);
@@ -48,13 +56,14 @@ const postPublication = (image, content) => {
   //   publi = { publi: JSON.stringify({ content: content }) };
   // }
   // console.log(...formData);
-  return axios.post(apiUrl + "publication/", formData, configApi);
+  return axios.post(apiUrl + "publication/", formData, await getConfig());
 };
-
-const suppressionPublication = (id) => {
-  return axios.delete(apiUrl + "publication/" + id, configApi);
+/* Suppression publication  */
+const suppressionPublication = async (id) => {
+  return axios.delete(apiUrl + "publication/" + id, await getConfig());
 };
-const modifyPublication = (id, content, image, isDeliting) => {
+/* Modification publication  */
+const modifyPublication = async (id, content, image, isDeliting) => {
   console.log(content);
   console.log(image);
   // console.log(id);
@@ -71,25 +80,24 @@ const modifyPublication = (id, content, image, isDeliting) => {
     }
     console.log("on sort ");
 
-    return axios.put(apiUrl + "publication/" + id, formData, configApi);
+    return axios.put(apiUrl + "publication/" + id, formData, await getConfig());
   } else {
     if (!content) {
       console.log("content vide ");
-      return axios.put(apiUrl + "publication/" + id, { content: null }, configApi);
+      return axios.put(apiUrl + "publication/" + id, { content: null }, await getConfig());
     }
     else {
       console.log("on envoie");
-      return axios.put(apiUrl + "publication/" + id, { content }, configApi);
+      return axios.put(apiUrl + "publication/" + id, { content }, await getConfig());
 
     }
   }
 };
+/* Suppression image  */
 const deleteImage = async (publication, content) => {
   console.log(content);
   if (content && content.trim().length > 0) {
-
-    return await axios.put(apiUrl + "publication/" + publication._id, { content: content, deleteImage: true }, configApi);
-
+    return await axios.put(apiUrl + "publication/" + publication._id, { content: content, deleteImage: true }, await getConfig());
   }
 }
 

@@ -3,12 +3,12 @@ import { NavLink } from "react-router-dom";
 
 const Logo = () => {
   return (
-    <NavLink to="#" >
+    <NavLink to="/" >
       <div className="logo" aria-hidden="true">
         {/* <img src="" alt="Logo Groupomania" /> */}
         {/* <h3>Groupomania</h3> */}
       </div>
-      <span class="sr-only">Home</span>
+      <span className="sr-only">Home</span>
     </NavLink>
 
   );

@@ -59,11 +59,12 @@ const SignUp = () => {
       alert(response.message);
       // setErrorContent(response);
     } else {
+      alert("Utilisateur bien créé");
       dispatchUser({
         type: "REGISTER",
         payload: { user: {} },
       });
-      history("/");
+      // history("/");
       setError(false);
     }
   };
@@ -164,9 +165,9 @@ const SignUp = () => {
               className="btn_envoyer"
               disabled={
                 !passwordIsValid ||
-                  !firstnameIsValid ||
-                  !emailIsValid ||
-                  !lastnameIsValid
+                !firstnameIsValid ||
+                !emailIsValid ||
+                !lastnameIsValid
                   ? true
                   : false
               }

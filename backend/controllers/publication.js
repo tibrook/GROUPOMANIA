@@ -5,11 +5,9 @@ const Publication = require("../models/Publication");
 /* Create publi  */
 exports.createpubli = async (req, res, next) => {
   const authorPubli = await getName(req.auth.userId);
-  console.log(authorPubli);
   let nameFile;
   let publication;
   if (req.body.publi.content && !fieldChecker(req)) {
-    console.log("req.body.publi : " + req.body.publi);
     res
       .status(400)
       .json({ error: "Les caractères spéciaux ne sont pas acceptés" });
@@ -21,8 +19,9 @@ exports.createpubli = async (req, res, next) => {
     return;
   }
   const publiObject = JSON.parse(req.body.publi);
+  // Verification des données envoyées
+
   if (publiObject.content.trim("").length > 0) {
-    // Verification des données envoyées
 
     //console.log(publiObject.content.trim("").length);
 

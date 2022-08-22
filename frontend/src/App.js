@@ -6,18 +6,16 @@ import User from "./pages/User";
 import { useUserContext } from "./hooks/useUserContext";
 
 function App() {
-  const { user, dispatchUser } = useUserContext();
+  const { user } = useUserContext();
 
-  console.log(user);
   return (
     <div>
       <BrowserRouter>
         <Routes>
-
+          <Route path="/login" element={user && user.auth ? <Navigate replace to="/" /> : <Login />} />
           <Route path="/" element={user && user.auth ? <Home /> : <Navigate replace to="/login" />} />
           <Route path="/user/:userId" element={user && user.auth ? <User /> : <Navigate replace to="/login" />} />
-          <Route path="/login" element={user && user.auth ? <Navigate replace to="/" /> : <Login />} />
-          <Route path="*" element={<Error />} />
+          <Route path="*" element={user && user.auth ? <Error /> : <Navigate replace to="/login" />} />
         </Routes>
       </BrowserRouter>
     </div>

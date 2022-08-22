@@ -16,11 +16,12 @@ function Home() {
       const response = await findAll();
       if (response.status === 200) {
         // console.log(response);
-        dispatchPublications({
+        await dispatchPublications({
           type: "GET_PUBLICATIONS",
           payload: response.data,
         });
       } else {
+        console.log(response);
         setErrors(response.data);
       }
     };
