@@ -11,5 +11,6 @@ router.get("/:id", auth, publiCtrl.getOnepubli);
 router.put("/:id", auth, multer, publiCtrl.modifypubli);
 router.delete("/:id", auth, publiCtrl.deletepubli);
 router.post("/:id/like", auth, publiCtrl.addLike);
+router.get("/user/:id", auth, publiCtrl.getPubliByUserId);
 
 module.exports = router;

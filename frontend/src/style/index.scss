@@ -2,4 +2,15 @@
 @import "./components/header";
 @import "./components/logo";
 @import "./components/publication";
-@import "./components/likes"; // @import "./components/card";
+@import "./components/likes";
+@import "./connect/index.scss";
+// @import "./components/card";
+// @import "./components/emojionearea.css";
+body {
+  background: $black2;
+  color: $white;
+}
+a {
+  text-decoration: none;
+  color: white;
+}

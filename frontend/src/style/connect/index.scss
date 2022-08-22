@@ -1,0 +1,269 @@
+@import "../settings";
+.app-Header {
+  background: $black1;
+  width: 60%;
+  min-width: 300px;
+  max-width: 650px;
+  margin: 150px auto 30px;
+  text-align: center;
+  position: relative;
+  padding: 20px 20px;
+  border-radius: 0 20px 20px 20px;
+  min-height: 258px;
+  box-shadow: $shadow;
+
+  .connect-modal {
+    height: 100%;
+    .errorContent {
+      font-weight: bold;
+    }
+    .header-btn {
+      position: absolute;
+      left: 0;
+      top: -29px;
+
+      button {
+        color: $white;
+        background: $black1;
+        padding: 4px 14px;
+        border-radius: 10px 10px 0 0;
+        transition: 0.2s;
+
+        &:hover {
+          filter: brightness(135%);
+        }
+      }
+    }
+    .login {
+      width: 50%;
+    }
+    .signup-container,
+    .login-container {
+      min-height: 210px;
+      @include verticalCenter;
+
+      h1 {
+        margin-bottom: 8px;
+      }
+      /* Formulaire d'inscription */
+      .form-login {
+        display: grid;
+
+        label {
+          position: absolute;
+          top: 84px;
+          left: 50px;
+        }
+        .password {
+          position: absolute;
+          top: 130px;
+        }
+        svg {
+          cursor: pointer;
+          position: absolute;
+          right: 120px;
+          top: 130px;
+        }
+      }
+      /* Formulaire de connexion */
+      .signupForm {
+        display: flex;
+        button[disabled="disabled"],
+        button:disabled {
+          cursor: none;
+        }
+
+        .labelForm {
+          width: 30%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: auto;
+          margin: 9px 0px 60px;
+
+          .passwordWrapper {
+            position: relative;
+            .inscription_label_password {
+              top: 135px;
+            }
+            .fa-eye {
+              cursor: pointer;
+              position: absolute;
+              top: 12px;
+            }
+          }
+        }
+        .contentForm {
+          span {
+            display: block;
+            width: 100%;
+            font-size: 1rem;
+          }
+          .icon_eye {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+          }
+        }
+
+        .email {
+          position: absolute;
+          left: 80px;
+          top: 80px;
+        }
+        .password {
+          position: absolute;
+          left: 80px;
+          top: 130px;
+        }
+        input {
+          width: 70%;
+          text-align: center;
+          padding: 8px 10px;
+          transition: 0.2s;
+        }
+      }
+      ul {
+        .faXmark {
+          color: red;
+        }
+        .fa-check {
+          color: green;
+        }
+        svg {
+          transform: translateX(20px) 2s;
+          padding-left: 15px;
+        }
+      }
+    }
+  }
+  // .user-infos {
+  //   display: flex;
+  //   align-items: center;
+  //   position: relative;
+  //   user-select: none;
+
+  //   span {
+  //     background: $color1;
+  //     height: 30px;
+  //     width: 30px;
+  //     @include verticalCenter;
+  //     border-radius: 150px;
+  //     text-transform: uppercase;
+  //     box-shadow: $shadow;
+  //     transform: translateY(-10px);
+  //   }
+  //   h4 {
+  //     text-transform: capitalize;
+  //     font-size: 2.5rem;
+  //     transform: translate(10px, -10px);
+  //   }
+  //   button {
+  //     position: absolute;
+  //     right: 6px;
+  //     top: 0;
+  //     background: none;
+  //     color: $color1;
+  //   }
+  // }
+  // .new-post-modal {
+  //   form {
+  //     display: grid;
+
+  //     textarea {
+  //       height: 104px;
+  //       font-size: 1.3rem;
+  //       border-radius: 10px 10px 0 10px;
+  //     }
+  //     input {
+  //       width: 100px;
+  //       margin-left: auto;
+  //       margin-top: 0px;
+  //       border-radius: 10px 0 10px 10px;
+  //     }
+  //   }
+  // }
+}
+@mixin verticalCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "LatoWeb", sans-serif;
+  font-size: 1.05rem;
+}
+
+body {
+  background: $black2;
+  color: $white;
+}
+
+button,
+input[type="submit"] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  background: $color1;
+  transition: 0.2s;
+
+  &:hover {
+    filter: brightness(80%);
+    transform: translateX(2px);
+  }
+}
+input[type="submit"]:disabled {
+  background: rgb(95, 91, 91);
+  cursor: default;
+  &:hover {
+    transform: none;
+    filter: none;
+  }
+}
+
+input,
+textarea {
+  border-radius: 7px;
+  border: none;
+  resize: none;
+  margin: 5px;
+  padding: 8px;
+  background: $white;
+}
+@media screen and (max-width: 768px) {
+  .app-Header {
+    .connect-modal {
+      .login {
+        width: 80%;
+      }
+      .signup {
+        .signupForm {
+          .contentForm {
+            input {
+              width: 100%;
+            }
+          }
+        }
+      }
+      .signup-container {
+        .signupForm {
+          .labelForm {
+            display: none;
+          }
+        }
+      }
+      .login-container {
+        .form-login {
+          label {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

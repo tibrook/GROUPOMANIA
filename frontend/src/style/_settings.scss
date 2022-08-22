@@ -1,10 +1,13 @@
 @font-face {
-  font-family: 'LatoWeb';
-  src: url('../assets/fonts/Lato-Regular.eot'); /* IE9 Compat Modes */
-  src: url('../assets/fonts/Lato-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('../assets/fonts/Lato-Regular.woff2') format('woff2'), /* Modern Browsers */
-       url('../assets/fonts/Lato-Regular.woff') format('woff'), /* Modern Browsers */
-       url('../assets/fonts/Lato-Regular.ttf') format('truetype');
+  font-family: "LatoWeb";
+  src: url("../assets/fonts/Lato-Regular.eot"); /* IE9 Compat Modes */
+  src: url("../assets/fonts/Lato-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("../assets/fonts/Lato-Regular.woff2") format("woff2"),
+    /* Modern Browsers */ url("../assets/fonts/Lato-Regular.woff")
+      format("woff"),
+    /* Modern Browsers */ url("../assets/fonts/Lato-Regular.ttf")
+      format("truetype");
   font-style: normal;
   font-weight: normal;
   text-rendering: optimizeLegibility;
@@ -12,11 +15,17 @@
 
 $font-1: "LatoWeb", sans-serif;
 
-$color-1: #FD2D01;
-$color-2: #FFD7D7;
-$color-3: #4E5166;
-$white: rgb(243, 243, 243);
-
+$color-1: #fd2d01;
+$color-2: #ffd7d7;
+$color-3: #4e5166;
+$white: rgb(240, 238, 238);
+$color1: rgb(211, 27, 57);
+$black1: rgb(36, 36, 36);
+$black2: rgb(49, 49, 49);
+$black3: rgb(70, 70, 70);
+$white: rgb(207, 207, 207);
+$grey: rgb(95, 95, 95);
+$shadow: 0 3px 20px rgba(0, 0, 0, 0.356);
 @mixin verticalCenter {
   display: flex;
   justify-content: center;

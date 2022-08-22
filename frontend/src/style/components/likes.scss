@@ -1,8 +1,17 @@
 .faThumbsUpGreen {
   color: green;
+  transform: scale(1.1);
 }
 .fa-thumbs-up {
   cursor: pointer;
+}
+.footerPost {
+  span {
+    padding-right: 15px;
+  }
+  svg {
+    transition: all 450ms;
+  }
 }
 .fa-thumbs-down {
   cursor: pointer;

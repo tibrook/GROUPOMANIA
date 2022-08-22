@@ -1,33 +1,40 @@
 import { useEffect, useState } from "react";
-import { findAll } from "../requests/publicationRequest";
+import { findUserPublications } from "../requests/publicationRequest";
 import Publication from "../components/Publication";
 import Logo from "../components/Logo";
 import Header from "../components/Header";
-import PublicationForm from "../components/PublicationForm";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePublicationsContext } from "../hooks/usePublicationsContext";
-function Home() {
+import { useParams } from "react-router-dom";
+const User = () => {
   const { publications, dispatchPublications } = usePublicationsContext();
+  const location = useLocation();
+  //   console.log(location);
+  const author = location.state?.author;
+  //   console.log(author);
   const [error, setErrors] = useState(null);
-  let navigate = useNavigate();
-
+  const userIdLocalStorage = localStorage.getItem("userId");
+  let { userId } = useParams();
+  let history = useNavigate();
   useEffect(() => {
     const getPublications = async () => {
-      const response = await findAll();
+      const response = await findUserPublications(userId);
       if (response.status === 200) {
-        // console.log(response);
-        await dispatchPublications({
+        dispatchPublications({
           type: "GET_PUBLICATIONS",
           payload: response.data,
         });
       } else {
-        console.log(response);
         setErrors(response.data);
+        // console.log(response);
       }
     };
-
-    getPublications();
-  }, [dispatchPublications, navigate]);
+    if (!localStorage.getItem("token")) {
+      history("/login");
+    } else {
+      getPublications();
+    }
+  }, [dispatchPublications, history, userId]);
 
   return (
     <div className="mainWrapper">
@@ -37,9 +44,12 @@ function Home() {
         <Header />
       </header>
       <section>
-        <PublicationForm />
         <div className="publicationWrapper">
-          <h1>Publications récentes 👩‍💻👨‍💻 </h1>
+          {userId === userIdLocalStorage ? (
+            <h1>Mes publications</h1>
+          ) : (
+            <h1>Publications de {author}</h1>
+          )}
           {publications ? (
             publications.map((publication) => (
               <Publication
@@ -56,6 +66,5 @@ function Home() {
       </section>
     </div>
   );
-}
-
-export default Home;
+};
+export default User;
