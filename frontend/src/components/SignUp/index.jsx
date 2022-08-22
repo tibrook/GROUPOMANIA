@@ -13,7 +13,6 @@ const SignUp = () => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [displayFirstname, setDisplayFirstame] = useState("");
   const [displayLastname, setDisplayLastname] = useState("");
-  const [error, setError] = useState(false);
   const { dispatchUser } = useUserContext();
   const [passwordIdVisible, setPasswordIsVisible] = useState(false);
   const passwordHasValidLength = registerPassword.length >= 8;
@@ -23,8 +22,6 @@ const SignUp = () => {
     /[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]/.test(registerPassword);
   const passwordHasNumber = /[0-9]/.test(registerPassword);
   let emailIsValid;
-  // const emailIsValid = registerEmail.match(/^([\w_.-]+@groupomania.fr)/gm);
-  // console.log(emailIsValid);
   if (!registerEmail.match(/^[\w_.-]+@groupomania.fr$/i)) {
     emailIsValid = false;
   } else {
@@ -51,18 +48,13 @@ const SignUp = () => {
     );
     console.log(response);
     if (response.status !== 201) {
-      console.log(response);
-      setError(true);
       alert(response.message);
-      // setErrorContent(response);
     } else {
       alert("Utilisateur bien créé");
       dispatchUser({
         type: "REGISTER",
         payload: { user: {} },
       });
-      // history("/");
-      setError(false);
     }
   };
 

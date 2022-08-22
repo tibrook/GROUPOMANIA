@@ -2,9 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { postPublication } from "../../requests/publicationRequest";
 import Picker from "emoji-picker-react";
-// import "../../utils/conf/";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
-import { useUserContext } from "../../hooks/useUserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 const PublicationForm = () => {
@@ -13,7 +11,6 @@ const PublicationForm = () => {
   const [error, setError] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const { dispatchPublications } = usePublicationsContext();
-  const { user, dispatchUser } = useUserContext();
   /* Envoi du formulaire */
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -9,9 +9,7 @@ import { useParams } from "react-router-dom";
 const User = () => {
   const { publications, dispatchPublications } = usePublicationsContext();
   const location = useLocation();
-  //   console.log(location);
   const author = location.state?.author;
-  //   console.log(author);
   const [error, setErrors] = useState(null);
   const userIdLocalStorage = localStorage.getItem("userId");
   let { userId } = useParams();
@@ -26,7 +24,6 @@ const User = () => {
         });
       } else {
         setErrors(response.data);
-        // console.log(response);
       }
     };
 

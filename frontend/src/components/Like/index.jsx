@@ -6,14 +6,12 @@ import { findOne } from "../../requests/publicationRequest";
 import { sendLike } from "../../requests/publicationRequest";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
 const Like = ({ publication }) => {
-  const { publications, dispatchPublications } = usePublicationsContext();
-
+  const { dispatchPublications } = usePublicationsContext();
   const [like, setLike] = useState(publication.likes);
   const [dislike, setDislike] = useState(publication.dislikes);
   const [likeActiv, setLikeActive] = useState(false);
   const [disLikeActiv, setDislikeActive] = useState(false);
   const userIdApi = localStorage.getItem("userId");
-
   useEffect(() => {
     const checkLike = async (id, userId) => {
       const result = await findOne(id);
@@ -27,7 +25,6 @@ const Like = ({ publication }) => {
     checkLike(publication._id, userIdApi);
   });
   const likef = async () => {
-    // unlike
     if (likeActiv) {
       const response = await sendLike(0, publication._id);
       if (response.status === 201) {
@@ -55,11 +52,8 @@ const Like = ({ publication }) => {
             likes: like + 1,
           },
         });
-        console.log(publications);
       }
-      // console.log(publications);
     }
-    console.log(publications);
   };
   const disLikef = async () => {
     if (disLikeActiv) {
@@ -67,7 +61,6 @@ const Like = ({ publication }) => {
       if (response.status === 201) {
         setDislikeActive(false);
         setDislike(dislike - 1);
-        // publication.dislike--;
         dispatchPublications({
           type: "UPDATE_PUBLICATION",
           payload: {
@@ -81,7 +74,6 @@ const Like = ({ publication }) => {
       if (response.status === 201) {
         setDislikeActive(true);
         setDislike(dislike + 1);
-        // publication.dislike++;
 
         await dispatchPublications({
           type: "UPDATE_PUBLICATION",
@@ -92,10 +84,8 @@ const Like = ({ publication }) => {
         });
       }
     }
-    console.log(publications);
   };
-  // console.log("bonjour");
-  // console.log(publication.dislike);
+
   return (
     <div className="footerPost">
       <FontAwesomeIcon

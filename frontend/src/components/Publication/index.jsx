@@ -22,19 +22,16 @@ const Publication = ({ publication, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditConent] = useState(publication.content);
   const [editImage, setEditImage] = useState(null);
-  const [isSelectingItem] = useState(false);
   const [error, setError] = useState(false);
   const userId = localStorage.getItem("userId");
   const token = jwt_decode(localStorage.getItem("token"));
-
   const [errorContent, setErrorContent] = useState("");
   const [isEditingMenu, setEditingMenu] = useState(false);
   const { user } = useUserContext();
-
   const [isDelitingImage, setIsDelitingImage] = useState(false);
   const { publications, dispatchPublications } = usePublicationsContext();
-  let ids = JSON.parse(localStorage.getItem("selectedPost"));
-  const [publicationsIds] = useState([]);
+
+  /* Suppression de publication  */
   const handleDelete = async () => {
     if (window.confirm("Voulez-vous supprimer la publication ?")) {
       const response = await suppressionPublication(publication._id);
@@ -50,6 +47,7 @@ const Publication = ({ publication, index }) => {
       return;
     }
   };
+  /* Génération du message de date de création */
   const creationDate = (date) => {
     let response;
 
@@ -83,7 +81,16 @@ const Publication = ({ publication, index }) => {
 
     return response;
   };
+  /* Clic sur icone de modification */
+  const handleEditMenu = () => {
+    if (!isEditingMenu) {
+      setEditingMenu(true);
+    } else {
+      setEditingMenu(false);
+    }
+  };
 
+  /* Validation de la modification  */
   const handleEdit = async () => {
     if (
       editContent.trim().length === 0 &&
@@ -93,10 +100,7 @@ const Publication = ({ publication, index }) => {
       alert("Il faut au moins un message ou une image");
       return;
     }
-    console.log(!editImage);
-    console.log(editContent.trim().length === 0);
-    console.log(editContent);
-    console.log(!publication.imageUrl);
+
     if (
       editContent &&
       !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
@@ -115,15 +119,12 @@ const Publication = ({ publication, index }) => {
     }
     const supprContent =
       editContent && editContent.trim().length === 0 ? false : true;
-    // console.log(supprContent);
-    // console.log(editContent);
     const response = await modifyPublication(
       publication._id,
       supprContent ? editContent : null,
       editImage ? editImage : null,
       isDelitingImage ? isDelitingImage : false
     );
-    console.log(response.data);
     if (response.status === 200) {
       await dispatchPublications({
         type: "UPDATE_PUBLICATION",
@@ -140,41 +141,13 @@ const Publication = ({ publication, index }) => {
       setError(true);
     }
   };
-  const handleEditMenu = () => {
-    if (!isEditingMenu) {
-      setEditingMenu(true);
-    } else {
-      setEditingMenu(false);
-    }
-  };
-  const btnSupprAll = async () => {
-    if (
-      window.confirm(
-        `Etes vous sur de vouloir supprimer les ${
-          ids.length + 1
-        } publications ? `
-      )
-    ) {
-      for (let iduser in ids) {
-        try {
-          // console.log(iduser);
-          await suppressionPublication(ids[iduser]);
-          localStorage.removeItem("selectedPost");
-          dispatchPublications({
-            type: "DELETE_PUBLICATION",
-            payload: ids[iduser],
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-  };
+  /* Annulation */
   const cancelModif = () => {
     setEditConent(publication.content);
     setEditImage("");
     setIsEditing(false);
   };
+  /* Suppression d'image */
   const handleDeleteImage = async () => {
     if (editContent && editContent.trim().length > 0) {
       if (window.confirm("Voulez-vous supprimer l'image ?")) {
@@ -224,7 +197,6 @@ const Publication = ({ publication, index }) => {
         <Link
           to={{
             pathname: `/user/${publication.userId}`,
-            // state: { author: publication.author },
           }}
           state={{ author: publication.author }}
         >
@@ -242,14 +214,6 @@ const Publication = ({ publication, index }) => {
           icon={faBars}
           onClick={handleEditMenu}
         />
-        {isSelectingItem ? (
-          <button onClick={btnSupprAll}>
-            Supprimer{" "}
-            {ids.length === 1 ? "la" : `les ${publicationsIds.length}`}{" "}
-            publication
-            {ids.length === 1 ? "" : "s"}
-          </button>
-        ) : null}
       </div>
       <div className={isEditingMenu ? "menuEditing" : "menuEditing menuHidden"}>
         <ul>
