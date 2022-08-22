@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { signup, login } from "../../requests/userRequest";
+import { signup } from "../../requests/userRequest";
 import { useUserContext } from "../../hooks/useUserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,15 +8,13 @@ import {
   faEyeSlash,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 const SignUp = () => {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [displayFirstname, setDisplayFirstame] = useState("");
   const [displayLastname, setDisplayLastname] = useState("");
-  const [error, setError] = useState(false);
-  const [errorContent, setErrorContent] = useState("");
-  const { user, dispatchUser } = useUserContext();
+  const [setError] = useState(false);
+  const { dispatchUser } = useUserContext();
   const [passwordIdVisible, setPasswordIsVisible] = useState(false);
   const passwordHasValidLength = registerPassword.length >= 8;
   const passwordHasLowercaseLetter = /[a-z]/.test(registerPassword);
@@ -27,7 +25,7 @@ const SignUp = () => {
   let emailIsValid;
   // const emailIsValid = registerEmail.match(/^([\w_.-]+@groupomania.fr)/gm);
   // console.log(emailIsValid);
-  if (!registerEmail.match(/^[\w_\.-]+@groupomania.fr$/i)) {
+  if (!registerEmail.match(/^[\w_.-]+@groupomania.fr$/i)) {
     emailIsValid = false;
   } else {
     emailIsValid = true;
@@ -38,7 +36,6 @@ const SignUp = () => {
     passwordHasSpecialCharacter &&
     passwordHasUppercaseLetter &&
     passwordHasNumber;
-  let history = useNavigate();
   const firstnameIsValid =
     /^[a-zA-Z\-éÉèç ]*$/.test(displayFirstname) &&
     displayFirstname.trim() !== "";
