@@ -4,12 +4,10 @@ const token = localStorage.getItem("token")
 const name = localStorage.getItem("name")
 const auth = localStorage.getItem("auth")
 const user = userId ? { userId: userId, token: token, name: name, auth: auth } : null
-// export const UserContext = createContext(userId ? { user: { userId: userId, token: token, name: name, role: role } } : { user: null });
 export const UserContext = createContext();
 
 
 export const userReducer = (state, action) => {
-    // console.log(action.payload);
     switch (action.type) {
         case "LOGIN":
             localStorage.setItem("userId", action.payload.userId);
@@ -33,8 +31,6 @@ export const userReducer = (state, action) => {
 
 
 export const UserContextProvider = ({ children }) => {
-    // const user = {{ userId}? (user: { userId: userId, token: token, name: name, role: role }) : "null"}}
-
     const [state, dispatch] = useReducer(userReducer, {
         user: user
     })

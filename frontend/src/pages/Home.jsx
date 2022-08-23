@@ -15,13 +15,11 @@ function Home() {
     const getPublications = async () => {
       const response = await findAll();
       if (response.status === 200) {
-        // console.log(response);
         await dispatchPublications({
           type: "GET_PUBLICATIONS",
           payload: response.data,
         });
       } else {
-        console.log(response);
         setErrors(response.data);
       }
     };

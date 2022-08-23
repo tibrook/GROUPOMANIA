@@ -60,23 +60,19 @@ const Publication = ({ publication, index }) => {
     if (secondes === 0) {
       response = `À l'instant`;
     } else if (secondes <= 59) {
-      response = `Posté il y a ${secondes} ${
-        secondes > 1 ? "secondes" : "seconde"
-      }`;
+      response = `Posté il y a ${secondes} ${secondes > 1 ? "secondes" : "seconde"
+        }`;
     } else if (secondes > 59 && secondes < 3600) {
-      response = `Posté il y a ${minutes} ${
-        minutes > 1 ? "minutes" : "minute"
-      } et ${seconde} ${seconde > 1 ? "secondes" : "seconde"}`;
+      response = `Posté il y a ${minutes} ${minutes > 1 ? "minutes" : "minute"
+        } et ${seconde} ${seconde > 1 ? "secondes" : "seconde"}`;
     } else if (secondes > 3599 && secondes < 86400) {
-      response = `Posté il y a ${hours} ${
-        hours > 1 ? "heures" : "heure"
-      } et ${minutes} ${minutes > 1 ? "minutes" : "minute"}`;
+      response = `Posté il y a ${hours} ${hours > 1 ? "heures" : "heure"
+        } et ${minutes} ${minutes > 1 ? "minutes" : "minute"}`;
     } else if (hours > 23 && hours < 168) {
       response = `Posté il y a ${jours} ${jours > 1 ? "jours" : "jour"}`;
     } else if (hours >= 168) {
-      response = `Posté il y a ${semaines} ${
-        semaines > 1 ? "semaines" : "semaine"
-      }`;
+      response = `Posté il y a ${semaines} ${semaines > 1 ? "semaines" : "semaine"
+        }`;
     }
 
     return response;
@@ -93,7 +89,7 @@ const Publication = ({ publication, index }) => {
   /* Validation de la modification  */
   const handleEdit = async () => {
     if (
-      editContent.trim().length === 0 &&
+      (editContent && editContent.trim().length === 0) &&
       !editImage &&
       !publication.imageUrl
     ) {
@@ -200,7 +196,13 @@ const Publication = ({ publication, index }) => {
           }}
           state={{ author: publication.author }}
         >
-          <span className="authorPubli">{publication.author}</span>
+          <span
+            className={
+              isEditing ? "authorPubli authorPubliModif" : "authorPubli"
+            }
+          >
+            {publication.author}
+          </span>
         </Link>
         <span className="dateCreation">
           {creationDate(publication.createdAt)}
@@ -237,7 +239,13 @@ const Publication = ({ publication, index }) => {
         </ul>
       </div>
       {isEditing ? (
+        <label htmlFor="updateArea" className="udpateArea">
+          Publier votre message
+        </label>
+      ) : null}
+      {isEditing ? (
         <textarea
+          id="updateArea"
           defaultValue={publication.content}
           autoFocus
           onChange={(e) => setEditConent(e.target.value)}
@@ -250,14 +258,13 @@ const Publication = ({ publication, index }) => {
       {editImage || publication.imageUrl ? (
         <img
           src={editImage ? editImage : publication.imageUrl}
-          alt={`De : ${user.name} , ${
-            editImage ? editImage.name : publication.imageUrl
-          }`}
+          alt={`De : ${user.name} , ${editImage ? editImage.name : publication.imageUrl
+            }`}
         />
       ) : null}
       <div className="iconWrapper">
         {isEditing &&
-        (publication.userId === userId || token.role === "admin") ? (
+          (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faCheck}
             className="icon_validate"
@@ -272,7 +279,7 @@ const Publication = ({ publication, index }) => {
           />
         ) : null}
         {isEditing &&
-        (publication.userId === userId || token.role === "admin") ? (
+          (publication.userId === userId || token.role === "admin") ? (
           <FontAwesomeIcon
             icon={faXmark}
             className="icon_cancel"
@@ -304,11 +311,15 @@ const Publication = ({ publication, index }) => {
       ) : null}
       {isEditing ? (
         <input
+          id="uploadModified"
           type="file"
           name="imageUpload"
           onChangeCapture={(e) => setEditImage(e.target.files[0])}
           accept="image/png, image/jpeg"
         />
+      ) : null}
+      {isEditing ? (
+        <label htmlFor="uploadModified"> Sélectionner une image</label>
       ) : null}
       <Like publication={publication} />
       {error ? <span className="error">{errorContent}</span> : ""}

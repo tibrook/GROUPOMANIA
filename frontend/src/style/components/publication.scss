@@ -13,6 +13,7 @@ aside {
 .error {
   color: red;
 }
+
 .mainWrapper {
   display: flex;
   flex-wrap: wrap;
@@ -32,6 +33,7 @@ aside {
       flex-direction: column;
       width: 100%;
       padding: 15px 30px;
+
       label {
         display: none;
       }
@@ -89,6 +91,11 @@ aside {
     .noPubli {
       padding-top: 30px;
     }
+    .cardWrapper {
+      label {
+        display: none;
+      }
+    }
   }
 }
 .cardWrapper {
@@ -102,6 +109,7 @@ aside {
   border-radius: 15px;
   transition: 200ms;
   z-index: 1;
+
   svg {
     transition: 200ms;
     cursor: pointer;
@@ -165,6 +173,9 @@ aside {
       font-size: 1.15rem;
       font-weight: 600;
     }
+    .authorPubliModif {
+      color: black;
+    }
     .fa-bars {
       position: absolute;
       right: 30px;
@@ -174,6 +185,9 @@ aside {
     .faHidden {
       display: none;
     }
+  }
+  .updatedArea {
+    display: none;
   }
   .menuEditing {
     margin-left: auto;
@@ -214,6 +228,7 @@ aside {
       }
     }
   }
+
   .menuHidden {
     display: none;
   }

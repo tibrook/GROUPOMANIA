@@ -120,13 +120,16 @@ exports.getPubliByUserId = (req, res, next) => {
 exports.modifypubli = async (req, res, next) => {
   console.log(req.body);
   console.log(req.file);
-  console.log(req.body.deleteImage);
+  console.log(req.body.publication);
   /* On vérifie qu'il y ait bien des données envoyées  */
   if (!req.file && !req.body) {
     res.status(400).json({ error: "Format des données non valide" });
     return;
   }
-
+  if (req.body.deleteImage) {
+    console.log("yep");
+    supprImage(req.body.publication)
+  }
   const publiObject =
     req.file && req.body.publi
       ? /* Si oui, on traite la nouvelle image */
@@ -267,13 +270,6 @@ exports.addLike = (req, res, next) => {
         });
         return;
       }
-
-      /* if (req.body.userId != req.auth.userId) {
-        res.status(401).json({
-          error: "Unauthorize request",
-        });
-        return;
-      } */
       /* On vérifie si l'utilisateur a déjà like/dislike la publi*/
       const userFoundLike = publi.usersLiked.find(
         (user) => user == req.auth.userId
@@ -414,8 +410,17 @@ const supprImage = (req) => {
         return null;
       }
     });
+  } else if (req.body.publication.imageUrl) {
+    const filename = req.imageUrl.split("/images/")[1];
+
+    fs.unlink(`images/${filename}`, (error) => {
+      if (error) {
+        return null;
+      }
+    })
   } else {
     return null;
+
   }
 };
 

@@ -97,7 +97,7 @@ const modifyPublication = async (id, content, image, isDeliting) => {
 const deleteImage = async (publication, content) => {
   console.log(content);
   if (content && content.trim().length > 0) {
-    return await axios.put(apiUrl + "publication/" + publication._id, { content: content, deleteImage: true }, await getConfig());
+    return await axios.put(apiUrl + "publication/" + publication._id, { content: content, publication, deleteImage: true }, await getConfig());
   }
 }
 

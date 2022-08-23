@@ -3,7 +3,6 @@ export const PublicationContext = createContext();
 
 export const publicationReducer = (state, action) => {
 
-    // console.log(`State : ${state.publications} Action : ${action.type}`);
     switch (action.type) {
         case "GET_PUBLICATIONS":
             return { publications: action.payload };
@@ -17,7 +16,6 @@ export const publicationReducer = (state, action) => {
                 ]
             };
         case "UPDATE_PUBLICATION":
-            console.log(action.payload);
             return {
                 publications: [
                     ...state.publications.map((publication) => publication._id === action.payload._id ? action.payload : publication)
