@@ -18,6 +18,7 @@ import { usePublicationsContext } from "../../hooks/usePublicationsContext";
 import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { useUserContext } from "../../hooks/useUserContext";
+import Swal from 'sweetalert2'
 const Publication = ({ publication, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditConent] = useState(publication.content);
@@ -33,19 +34,37 @@ const Publication = ({ publication, index }) => {
 
   /* Suppression de publication  */
   const handleDelete = async () => {
-    if (window.confirm("Voulez-vous supprimer la publication ?")) {
-      const response = await suppressionPublication(publication._id);
-      if (response.status === 204) {
-        dispatchPublications({
-          type: "DELETE_PUBLICATION",
-          payload: publication._id,
-        });
+    await Swal.fire({
+      title: 'Êtes-vous sûrs de vouloir supprimer la publication?',
+      text: "Vous ne pourrez pas revenir en arrière !",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimer !',
+      cancelButtonText: 'Annuler'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await suppressionPublication(publication._id);
+        if (response.status === 204) {
+          dispatchPublications({
+            type: "DELETE_PUBLICATION",
+            payload: publication._id,
+          });
+          Swal.fire(
+            'Supprimé !',
+            'Votre publication a été supprimée.',
+            'success'
+          )
+        } else {
+          setError(true);
+        }
       } else {
-        setError(true);
+        return;
+
       }
-    } else {
-      return;
-    }
+    })
+
   };
   /* Génération du message de date de création */
   const creationDate = (date) => {
@@ -89,17 +108,24 @@ const Publication = ({ publication, index }) => {
   /* Validation de la modification  */
   const handleEdit = async () => {
     if (
-      (editContent && editContent.trim().length === 0) &&
+      (editContent.trim().length === 0) &&
       !editImage &&
       !publication.imageUrl
     ) {
-      alert("Il faut au moins un message ou une image");
+      console.log("marché");
+      Swal.fire(
+        'Erreur  !',
+        'Il faut au moins une image ou un message.',
+        'error'
+      )
       return;
     }
+    // console.log(editImage.length);
+    // console.log(publication.imageUrl.length);
 
     if (
       editContent &&
-      !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+      !editContent.match(/^[a-zA-Z0-9-éÉè.',àç_!?:= ]*$/) &&
       editContent &&
       !editContent.match(
         /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi
@@ -133,6 +159,11 @@ const Publication = ({ publication, index }) => {
       setEditingMenu(false);
       setIsEditing(false);
     } else {
+      Swal.fire(
+        'Erreur  !',
+        response.data.error,
+        'error'
+      )
       setEditConent("");
       setError(true);
     }
@@ -146,38 +177,72 @@ const Publication = ({ publication, index }) => {
   /* Suppression d'image */
   const handleDeleteImage = async () => {
     if (editContent && editContent.trim().length > 0) {
-      if (window.confirm("Voulez-vous supprimer l'image ?")) {
-        if (
-          editContent &&
-          !editContent.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
-          editContent &&
-          !editContent.match(
-            /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi
-          )
-        ) {
-          setErrorContent(
-            "Les caractères spéciaux ne sont pas acceptés pour le moment.. "
-          );
-          setError(true);
-          return;
-        } else {
-          setError(false);
-        }
-        const resp = await deleteImage(publication, editContent);
+      Swal.fire({
+        title: "Supprimer l'image?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: "Annuler"
 
-        if (resp.status === 200) {
-          setEditImage("");
-          setIsDelitingImage(true);
-          publication.imageUrl = null;
-          publication.content = editContent;
-          setIsEditing(false);
-          setEditConent(editContent);
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          if (publication.imageUrl) {
+            if (
+              editContent &&
+              !editContent.match(/^[a-zA-Z0-9-éÉ.è',àç_!?:= ]*$/) &&
+              editContent &&
+              !editContent.match(
+                /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi
+              )
+            ) {
+              setErrorContent(
+                "Les caractères spéciaux ne sont pas acceptés pour le moment.. "
+              );
+              setError(true);
+              return;
+            } else {
+              setError(false);
+            }
+            const resp = await deleteImage(publication, editContent);
+
+            if (resp.status === 200) {
+              setEditImage("");
+              setIsDelitingImage(true);
+              publication.imageUrl = null;
+              publication.content = editContent;
+              setIsEditing(false);
+              setEditConent(editContent);
+              Swal.fire(
+                'Supprimée!',
+                'Votre image a bien été supprimée.',
+                'success'
+              )
+            } else {
+              Swal.fire(
+                'Erreur  !',
+                'Une erreur est survenue lors de la suppression.',
+                'error'
+              )
+            }
+
+          }
+          else {
+            setEditImage(null);
+          }
         } else {
-          console.log("une erreur est survenue lors de la suppression");
+          return;
         }
-      }
-    } else {
-      alert("Il faut au moins une image ou un message.");
+
+      })
+    }
+    else {
+      Swal.fire(
+        'Erreur  !',
+        'Il faut au moins une image ou un message.',
+        'error'
+      )
       return;
     }
   };

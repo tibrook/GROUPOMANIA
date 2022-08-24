@@ -8,6 +8,8 @@ import {
   faEyeSlash,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import Swal from 'sweetalert2'
+
 const SignUp = () => {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
@@ -48,9 +50,17 @@ const SignUp = () => {
     );
     console.log(response);
     if (response.status !== 201) {
-      alert(response.message);
+      Swal.fire(
+        'Erreur  !',
+        response.message,
+        'error'
+      )
     } else {
-      alert("Utilisateur bien créé");
+      Swal.fire(
+        'Succès  !',
+        'Compte utilisateur créé.',
+        'success'
+      )
       dispatchUser({
         type: "REGISTER",
         payload: { user: {} },
@@ -154,9 +164,9 @@ const SignUp = () => {
               className="btn_envoyer"
               disabled={
                 !passwordIsValid ||
-                !firstnameIsValid ||
-                !emailIsValid ||
-                !lastnameIsValid
+                  !firstnameIsValid ||
+                  !emailIsValid ||
+                  !lastnameIsValid
                   ? true
                   : false
               }

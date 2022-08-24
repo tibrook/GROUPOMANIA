@@ -5,6 +5,8 @@ import Picker from "emoji-picker-react";
 import { usePublicationsContext } from "../../hooks/usePublicationsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import Swal from 'sweetalert2'
+
 const PublicationForm = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
@@ -15,43 +17,71 @@ const PublicationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(content);
-    if (window.confirm("Voulez-vous publier ? ")) {
-      if (content.trim().length === 0 && !image) {
-        setError(true);
-      } else {
-        const regexExp =
-          /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
-        // console.log(regexExp.test(content));
-        if (
-          !content.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
-          !content.match(regexExp)
-        ) {
-          // console.log("yes");
+    await Swal.fire({
+      title: "Voulez-vous publier ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, publier  !',
+      cancelButtonText: "Annuler"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        if (content.trim().length === 0 && !image) {
           setError(true);
         } else {
-          const res = await postPublication(image, content);
-
-          if (res.status === 201) {
-            dispatchPublications({
-              type: "CREATE_PUBLICATION",
-              payload: res.data.publi,
-            });
-            setError(false);
-            setImage("");
-            setContent("");
-          } else {
+          const regexExp =
+            /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
+          // console.log(regexExp.test(content));
+          if (
+            !content.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+            !content.match(regexExp)
+          ) {
+            // console.log("yes");
             setError(true);
+          } else {
+            const res = await postPublication(image, content);
+
+            if (res.status === 201) {
+              dispatchPublications({
+                type: "CREATE_PUBLICATION",
+                payload: res.data.publi,
+              });
+              Swal.fire(
+                'Publiée !',
+                "Votre publication vient d'être postée",
+                'success'
+              )
+              setError(false);
+              setImage("");
+              setContent("");
+            } else {
+              setError(true);
+            }
           }
         }
+      } else {
+        return;
       }
-    }
-    console.log(image);
-  };
-  const handleDeleteImage = () => {
-    if (window.confirm("Voulez-vous supprimer l'image ? ")) {
-      setImage("");
-    }
-    return;
+    });
+  }
+  const handleDeleteImage = async () => {
+    await Swal.fire({
+      title: "Supprimer l'image ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimer !'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setImage("");
+      }
+      else {
+        return;
+
+      }
+    })
   };
   const handleImage = (e) => {
     console.log(e);

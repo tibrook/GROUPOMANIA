@@ -3,16 +3,29 @@ import { NavLink } from "react-router-dom";
 import { useUserContext } from "../../hooks/useUserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import Swal from 'sweetalert2'
 const Navigation = () => {
   const { dispatchUser } = useUserContext();
   const username = localStorage.getItem("name");
   const userId = localStorage.getItem("userId");
   const logout = () => {
-    alert("deconnexion");
-    dispatchUser({
-      type: "LOGOUT",
-      payload: { user: null },
-    });
+    Swal.fire({
+      title: 'Se déconnecter ?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: "Annuler"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatchUser({
+          type: "LOGOUT",
+          payload: { user: null },
+        });
+      }
+    })
+
   };
 
   return (

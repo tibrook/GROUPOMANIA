@@ -146,6 +146,7 @@ exports.modifypubli = async (req, res, next) => {
         : req.body.deleteImage ? { ...req.body, imageUrl: ``, }
           : { ...req.body };
   delete publiObject.userId;
+  console.log(publiObject);
   // console.log(`PubliObject :  ${publiObject} `);
   /* On verifie qu'il n'y ait pas de caractères spéciaux  */
   if (publiObject.content) {
@@ -185,7 +186,7 @@ exports.modifypubli = async (req, res, next) => {
           { ...publiObject, _id: req.params.id }
         )
           .then(async () => {
-            if (req.file) {
+            if (req.file && publi.imageUrl) {
               supprImage(publi);
             }
             Publi.findOne({ _id: req.params.id }).then((publi) => {
@@ -361,7 +362,7 @@ const fieldChecker = (req) => {
   console.log(publiFields);
   if (
     publiFields.content.trim() == "" ||
-    (!publiFields.content.match(/^[a-zA-Z-éÉè',àç_!?:= ]*$/) &&
+    (!publiFields.content.match(/^[a-zA-Z0-9-éÉ.è',àç_!?:= ]*$/) &&
       regexExp.test(publiFields.content) == false)
   ) {
     return null;
