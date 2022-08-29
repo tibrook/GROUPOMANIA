@@ -1,3 +1,9 @@
+## Projet 7 Openclassroom - Créez un réseau social d'entreprise
+
+- Développer l’interface d’un site web grâce à un framework front-end
+- Authentifier un utilisateur et maintenir sa session
+- Implémenter un stockage de données sécurisé en utilisant une base de données
+
 ## Installation
 
 ----BACKEND FOLDER----------
