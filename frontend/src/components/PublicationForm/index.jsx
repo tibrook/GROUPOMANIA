@@ -56,6 +56,7 @@ const PublicationForm = () => {
               setImage("");
               setContent("");
             } else {
+              alert("error")
               setError(true);
             }
           }

@@ -30,6 +30,10 @@ header {
 }
 /* Téléphones */
 @media screen and (max-width: 760px) {
+  header {
+    padding: 8px 16px;
+    margin: 0;
+  }
   a {
     width: 30%;
     .logo {
@@ -62,6 +66,7 @@ header {
 @media screen and (min-width: 760px) and (max-width: 1024px) {
   header {
     width: 98%;
+    padding: 15px;
     height: auto;
   }
 }

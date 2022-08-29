@@ -87,7 +87,7 @@ aside {
     }
   }
   .publicationWrapper {
-    padding: 15px;
+    padding: 15px 0px;
     .noPubli {
       padding-top: 30px;
     }
@@ -153,7 +153,6 @@ aside {
   }
 
   .headerPubli {
-    width: 50%;
     input {
       cursor: pointer;
       position: absolute;
@@ -350,6 +349,8 @@ aside {
   }
   .mainWrapper {
     .createPostContainer {
+      margin: 0px;
+
       form {
         .picker-container {
           .emoji-icon {
