@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.fdbf20d3.css",
+    "main.js": "/static/js/main.089abb94.js",
+    "static/media/Lato-Regular.ttf": "/static/media/Lato-Regular.bb14dc80e8b5d860fe9c.ttf",
+    "static/media/Lato-Regular.woff": "/static/media/Lato-Regular.1d2ca94dfba6f8d87cfd.woff",
+    "static/media/Lato-Regular.eot": "/static/media/Lato-Regular.19df47b6173ee16371f8.eot",
+    "static/media/Lato-Regular.woff2": "/static/media/Lato-Regular.75614cfcfedd509b1f7a.woff2",
+    "static/media/icon-left-font.svg": "/static/media/icon-left-font.ef487d9ecf86bb6f5d52.svg",
+    "index.html": "/index.html",
+    "main.fdbf20d3.css.map": "/static/css/main.fdbf20d3.css.map",
+    "main.089abb94.js.map": "/static/js/main.089abb94.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fdbf20d3.css",
+    "static/js/main.089abb94.js"
+  ]
+}
