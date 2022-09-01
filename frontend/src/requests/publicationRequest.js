@@ -52,10 +52,7 @@ const postPublication = async (image, content) => {
   let formData = new FormData();
   formData.append("image", image);
   formData.append("publi", `{"content" : "${content}"}`);
-  // if (content.length > 0) {
-  //   publi = { publi: JSON.stringify({ content: content }) };
-  // }
-  // console.log(...formData);
+
   return axios.post(apiUrl + "publication/", formData, await getConfig());
 };
 /* Suppression publication  */
@@ -95,7 +92,6 @@ const modifyPublication = async (id, content, image, isDeliting) => {
 };
 /* Suppression image  */
 const deleteImage = async (publication, content) => {
-  console.log(content);
   if (content && content.trim().length > 0) {
     return await axios.put(apiUrl + "publication/" + publication._id, { content: content, publication, deleteImage: true }, await getConfig());
   }
